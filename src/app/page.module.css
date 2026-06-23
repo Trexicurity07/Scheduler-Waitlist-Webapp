@@ -1,0 +1,123 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+  padding: 20px 0;
+}
+
+.logo {
+  position: relative;
+  width: 180px;
+  height: 37px;
+  next-image-fill: contain;
+}
+
+.intro {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.intro h1 {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #000;
+}
+
+.intro p {
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #666;
+}
+
+.intro a {
+  color: #0070f3;
+  text-decoration: none;
+}
+
+.intro a:hover {
+  text-decoration: underline;
+}
+
+.ctas {
+  display: flex;
+  gap: 15px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 12px 24px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.primary:hover {
+  background-color: #333;
+}
+
+.secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 24px;
+  background-color: #f5f5f5;
+  color: #000;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.secondary:hover {
+  background-color: #e5e5e5;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 10px;
+  }
+
+  .logo {
+    width: 150px;
+    height: 31px;
+  }
+
+  .intro h1 {
+    font-size: 1.5rem;
+  }
+
+  .intro p {
+    font-size: 0.9rem;
+  }
+
+  .primary,
+  .secondary {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+  }
+}

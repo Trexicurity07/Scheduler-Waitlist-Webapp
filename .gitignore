@@ -4,3 +4,8 @@ node_modules/
 .env.local
 .vercel
 *.log
+graphify-out/
+*.tsbuildinfo
+.obsidian/
+.VSCodeCounter/
+.claude/settings.local.json

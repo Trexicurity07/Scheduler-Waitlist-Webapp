@@ -1,5 +1,18 @@
 ### Task 19: Public Waitlist Signup (Business Logic + Form + Route)
 
+> ██████████████████████████████████████████████████████████████
+> ## ⛔ THIS TASK HAS BEEN SUPERSEDED BY TASK 27
+>
+> The anonymous join flow built here (`join-waitlist.ts`, `src/app/api/waitlist/route.ts`,
+> `/join/[slug]`) is fully replaced by an account-gated apply flow. Every waitlist
+> application now requires a client account (see spec:
+> `docs/superpowers/specs/2026-06-25-client-accounts-unified-apply-flow-design.md`).
+>
+> **Task 27** (`27-apply-flow-rework.md`) deletes all files produced here and replaces
+> them. Do not implement Task 19 if it has not already been done. If it HAS already been
+> done, proceed directly to Task 27 which handles the deletion and replacement.
+> ██████████████████████████████████████████████████████████████
+
 **Files:**
 - Create: `src/lib/waitlist/join-waitlist.ts`
 - Create: `src/app/join/[slug]/page.tsx`

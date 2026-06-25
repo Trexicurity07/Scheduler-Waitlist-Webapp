@@ -1,5 +1,16 @@
 ### Task 17: Waitlist Housekeeping (14-Day Expiry + 48h Unverified Cleanup)
 
+> ██████████████████████████████████████████████████████████████
+> ## ⚠️ THIS TASK IS AMENDED BY TASK 29
+>
+> **Task 29** (`29-cron-remove-pending-verification.md`) removes the
+> `removeUnverifiedSignups` export built here — it becomes dead code after Task 25
+> drops `pending_verification` from the `waitlist_entries` status constraint.
+> `expireWaitlistEntries` is unchanged. Implement this task as written, then apply
+> Task 29 on top (or skip `removeUnverifiedSignups` entirely if implementing after
+> Task 25 has already been applied to the schema).
+> ██████████████████████████████████████████████████████████████
+
 **Files:**
 - Create: `src/lib/cron/waitlist-housekeeping.ts`
 - Test: `src/lib/cron/waitlist-housekeeping.test.ts` (integration — requires local Supabase running)

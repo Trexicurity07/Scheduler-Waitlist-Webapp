@@ -1,5 +1,13 @@
 ### Task 12: Connect Setup UI
 
+> ██████████████████████████████████████████████████████████████
+> ## ⚠️ THIS TASK IS AMENDED BY TASK 28
+>
+> **Task 28** (`28-connect-setup-business-type.md`) adds a `business_type` input field
+> to the connect-setup page and API route built here. Implement this task as written,
+> then apply Task 28 on top.
+> ██████████████████████████████████████████████████████████████
+
 **Files:**
 - Create: `src/app/connect/setup/page.tsx`
 - Create: `src/app/connect/setup/connect-setup-form.tsx`

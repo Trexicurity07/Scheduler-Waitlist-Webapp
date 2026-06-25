@@ -1,5 +1,14 @@
 ### Task 11: Slug Generator + Connect-Setup Business Logic
 
+> ██████████████████████████████████████████████████████████████
+> ## ⚠️ THIS TASK IS AMENDED BY TASK 28
+>
+> **Task 28** (`28-connect-setup-business-type.md`) adds a `business_type` field to the
+> connect-setup business logic (`ConnectSetupInput` schema + `businesses` insert). The
+> column is added by Task 25's migration 0006. Implement this task as written, then
+> apply Task 28 on top.
+> ██████████████████████████████████████████████████████████████
+
 **Files:**
 - Create: `src/lib/slug.ts`
 - Test: `src/lib/slug.test.ts`

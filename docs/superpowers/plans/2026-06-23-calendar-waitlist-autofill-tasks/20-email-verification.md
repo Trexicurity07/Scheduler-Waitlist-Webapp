@@ -1,5 +1,17 @@
 ### Task 20: Email Verification
 
+> ██████████████████████████████████████████████████████████████
+> ## ⛔ THIS TASK HAS BEEN SUPERSEDED BY TASK 27
+>
+> Per-entry email verification (`verify-email.ts`, `/verify-email/[token]`) is retired.
+> Account-level verification in `client_profiles.verified_at` (set once at signup via
+> Task 26) replaces it entirely.
+>
+> **Task 27** (`27-apply-flow-rework.md`) deletes all files produced here. Do not
+> implement Task 20 if it has not already been done. If it HAS already been done,
+> proceed directly to Task 27 which handles the deletion.
+> ██████████████████████████████████████████████████████████████
+
 **Files:**
 - Create: `src/lib/waitlist/verify-email.ts`
 - Create: `src/app/verify-email/[token]/page.tsx`

@@ -2,12 +2,13 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import { createServiceRoleClient } from '@/lib/db/supabase'
 import { joinWaitlist } from '@/lib/waitlist/join-waitlist'
+import { nameSchema, emailSchema, phoneSchema } from '@/lib/waitlist/validate-signup'
 
 const requestSchema = z.object({
   businessSlug: z.string().min(1),
-  name: z.string().min(1),
-  email: z.string().email(),
-  phone: z.string().min(7),
+  name: nameSchema,
+  email: emailSchema,
+  phone: phoneSchema,
   timeWindows: z
     .array(
       z.object({

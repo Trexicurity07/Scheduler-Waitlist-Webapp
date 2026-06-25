@@ -2,7 +2,6 @@
 
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { createBrowserSupabaseClient } from '@/lib/db/supabase-browser'
 
 export default function SignupPage() {
   const [email, setEmail] = useState('')
@@ -13,10 +12,16 @@ export default function SignupPage() {
   async function handleSubmit(event: FormEvent) {
     event.preventDefault()
     setError(null)
-    const supabase = createBrowserSupabaseClient()
-    const { error: signUpError } = await supabase.auth.signUp({ email, password })
-    if (signUpError) {
-      setError(signUpError.message)
+
+    const response = await fetch('/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    })
+    const body = await response.json()
+
+    if (!response.ok || !body.ok) {
+      setError(body.error ?? 'Something went wrong. Please try again.')
       return
     }
     router.push('/connect/setup')

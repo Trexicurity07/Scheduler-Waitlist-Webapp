@@ -23,43 +23,59 @@ export async function joinWaitlist(
     .maybeSingle()
   if (!business) return { ok: false, error: 'Business not found' }
 
-  const { data: emailMatches } = await supabase
+  const { data: emailClient } = await supabase
     .from('clients')
     .select('id')
     .eq('business_id', business.id)
     .eq('email', input.email)
-  const { data: phoneMatches } = await supabase
+    .maybeSingle()
+  const { data: phoneClient } = await supabase
     .from('clients')
     .select('id')
     .eq('business_id', business.id)
     .eq('phone', input.phone)
+    .maybeSingle()
 
-  const matchingClientIds = [...new Set([...(emailMatches ?? []), ...(phoneMatches ?? [])].map((c) => c.id))]
-
-  if (matchingClientIds.length > 0) {
-    const { data: activeEntries } = await supabase
-      .from('waitlist_entries')
-      .select('id')
-      .in('client_id', matchingClientIds)
-      .eq('status', 'active')
-    if (activeEntries && activeEntries.length > 0) {
-      return { ok: false, error: 'You are already on the waitlist for this business.' }
-    }
+  if (emailClient && phoneClient && emailClient.id !== phoneClient.id) {
+    return { ok: false, error: 'This email and phone number belong to different existing clients.' }
+  }
+  if (emailClient && !phoneClient) {
+    return { ok: false, error: 'This email is already registered with a different phone number.' }
+  }
+  if (phoneClient && !emailClient) {
+    return { ok: false, error: 'This phone number is already registered with a different email address.' }
   }
 
-  const { data: client, error: clientError } = await supabase
-    .from('clients')
-    .insert({ business_id: business.id, name: input.name, email: input.email, phone: input.phone })
+  let clientId: string
+  if (emailClient) {
+    clientId = emailClient.id
+    await supabase.from('clients').update({ name: input.name }).eq('id', clientId)
+  } else {
+    const { data: client, error: clientError } = await supabase
+      .from('clients')
+      .insert({ business_id: business.id, name: input.name, email: input.email, phone: input.phone })
+      .select('id')
+      .single()
+    if (clientError || !client) return { ok: false, error: 'Could not create client record.' }
+    clientId = client.id
+  }
+
+  const { data: activeEntry } = await supabase
+    .from('waitlist_entries')
     .select('id')
-    .single()
-  if (clientError || !client) return { ok: false, error: 'Could not create client record.' }
+    .eq('client_id', clientId)
+    .eq('status', 'active')
+    .maybeSingle()
+  if (activeEntry) {
+    return { ok: false, error: 'You are already on the waitlist for this business.' }
+  }
 
   const token = generateToken()
   const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
 
   const { error: entryError } = await supabase.from('waitlist_entries').insert({
     business_id: business.id,
-    client_id: client.id,
+    client_id: clientId,
     time_windows: input.timeWindows as unknown as Json,
     status: 'pending_verification',
     email_verification_token: token,

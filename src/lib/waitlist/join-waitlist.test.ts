@@ -109,6 +109,73 @@ describe('joinWaitlist (integration)', () => {
     expect(result.ok).toBe(false)
   })
 
+  it('reuses the existing client record when email and phone both match exactly, even after the prior entry was removed', async () => {
+    const { supabase, slug } = await setupBusiness()
+    await joinWaitlist(supabase, {
+      businessSlug: slug,
+      name: 'Eve Client',
+      email: 'eve@example.com',
+      phone: '15552223333',
+      timeWindows: [{ days: [1], start: '09:00', end: '17:00' }],
+    })
+    const { data: firstClient } = await supabase.from('clients').select('id').eq('email', 'eve@example.com').single()
+    await supabase.from('waitlist_entries').update({ status: 'removed' }).eq('client_id', firstClient!.id)
+
+    const result = await joinWaitlist(supabase, {
+      businessSlug: slug,
+      name: 'Eve Client',
+      email: 'eve@example.com',
+      phone: '15552223333',
+      timeWindows: [{ days: [2], start: '09:00', end: '17:00' }],
+    })
+
+    expect(result).toEqual({ ok: true })
+    const { data: clients } = await supabase.from('clients').select('id').eq('email', 'eve@example.com')
+    expect(clients).toHaveLength(1)
+  })
+
+  it('rejects a signup whose email matches an existing client but phone differs, even when that client has no active entry', async () => {
+    const { supabase, slug } = await setupBusiness()
+    await joinWaitlist(supabase, {
+      businessSlug: slug,
+      name: 'Frank Client',
+      email: 'frank@example.com',
+      phone: '15554445555',
+      timeWindows: [{ days: [1], start: '09:00', end: '17:00' }],
+    })
+
+    const result = await joinWaitlist(supabase, {
+      businessSlug: slug,
+      name: 'Frank Client',
+      email: 'frank@example.com',
+      phone: '15556667777',
+      timeWindows: [{ days: [2], start: '09:00', end: '17:00' }],
+    })
+
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects a signup whose phone matches an existing client but email differs, even when that client has no active entry', async () => {
+    const { supabase, slug } = await setupBusiness()
+    await joinWaitlist(supabase, {
+      businessSlug: slug,
+      name: 'Grace Client',
+      email: 'grace@example.com',
+      phone: '15558889999',
+      timeWindows: [{ days: [1], start: '09:00', end: '17:00' }],
+    })
+
+    const result = await joinWaitlist(supabase, {
+      businessSlug: slug,
+      name: 'Grace Client',
+      email: 'grace-other@example.com',
+      phone: '15558889999',
+      timeWindows: [{ days: [2], start: '09:00', end: '17:00' }],
+    })
+
+    expect(result.ok).toBe(false)
+  })
+
   it('returns an error when the business slug does not exist', async () => {
     const supabase = createServiceRoleClient()
     const result = await joinWaitlist(supabase, {

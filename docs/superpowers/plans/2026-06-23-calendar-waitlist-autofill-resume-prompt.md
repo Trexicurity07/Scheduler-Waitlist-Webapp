@@ -4,7 +4,7 @@ I'm resuming execution of the calendar-waitlist-autofill plan. The prior coordin
 
 1. `docs/superpowers/plans/2026-06-23-calendar-waitlist-autofill-handoff.md` — original handoff/governance (goal, hard rules, agent/model guidance). Still fully accurate, written once at project start.
 2. `docs/superpowers/specs/2026-06-23-calendar-waitlist-autofill-design.md` — design spec.
-3. `docs/superpowers/plans/2026-06-23-calendar-waitlist-autofill-plan.md` — the 24-task plan, pinned, do not restructure.
+3. `docs/superpowers/plans/2026-06-23-calendar-waitlist-autofill-tasks/00-overview.md` — Global Constraints, File Map, and Task File Index. The 24-task plan itself is pinned and split one file per task in that same folder (`01-scaffolding-env-validation.md` ... `24-dashboard-notification-history.md`) — do not restructure. Read only the file for the task you're currently on, not all 24.
 4. `.superpowers/sdd/progress.md` — durable ledger. **Trust this + `git log` over any assumption about what's done.** Tasks 1-6 are complete and reviewed. Task 7 is *implemented but not yet reviewed* — read the ledger's Task 7 entry carefully, it documents infrastructure changes (a new migration, a vitest config fix) that the reviewer must evaluate as in-scope.
 
 Branch: `feature/calendar-waitlist-autofill`. Don't trust any in-memory task list from a prior session (e.g. TaskCreate/TaskUpdate state) — recreate your own todo list from the plan + ledger as your first action.
@@ -24,6 +24,8 @@ Then your actual first task: **dispatch the Task 7 reviewer.** Generate the revi
 ## Process for every task (8 through 24)
 
 Use `superpowers:subagent-driven-development` exactly as before: `scripts/task-brief` extraction → fresh implementer subagent → `scripts/review-package` → task reviewer (spec + quality verdicts) → fix/re-review loop on Critical/Important findings → ledger update on clean review → immediately next task, no pause.
+
+For `scripts/task-brief PLAN_FILE TASK_NUMBER`, pass the per-task file from the Task File Index in `00-overview.md` (e.g. `docs/superpowers/plans/2026-06-23-calendar-waitlist-autofill-tasks/12-connect-setup-ui.md` for Task 12) as `PLAN_FILE` — not a single combined plan file, that no longer exists.
 
 **Model tiers** (see the skill's Model Selection section for full rationale):
 - Brief contains complete verbatim code, task is mechanical transcription (1-2 files) → cheapest tier (Haiku).

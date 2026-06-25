@@ -1,5 +1,0 @@
-# Tooling/meta noise, not project content - keep the graph scoped to the app.
-.superpowers/
-.VSCodeCounter/
-.claude/
-graphify-out/

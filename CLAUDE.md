@@ -11,12 +11,11 @@ Conventions for this codebase.
 - Integration tests require local Supabase running (`supabase start`) and use a fake `CalendarProvider` — never the live Google API.
 - No automated browser/E2E tests this phase — manual walkthrough per UI feature instead.
 
-## graphify
+## codegraph
 
-This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
+This project has a CodeGraph index at `.codegraph/` (local-only, gitignored) covering symbols and call paths across the codebase.
 
 Rules:
-- For codebase questions, first run `graphify query "<question>"` when graphify-out/graph.json exists. Use `graphify path "<A>" "<B>"` for relationships and `graphify explain "<concept>"` for focused concepts. These return a scoped subgraph, usually much smaller than GRAPH_REPORT.md or raw grep output.
-- If graphify-out/wiki/index.md exists, use it for broad navigation instead of raw source browsing.
-- Read graphify-out/GRAPH_REPORT.md only for broad architecture review or when query/path/explain do not surface enough context.
-- After modifying code, run `graphify update .` to keep the graph current (AST-only, no API cost).
+- For codebase questions, run `codegraph explore "<question>"` (or the `codegraph_explore` MCP tool, if loaded) before grepping or reading source files. It returns the relevant symbols' verbatim source plus the call paths between them in one shot.
+- The index auto-syncs via git hooks after every commit and branch checkout (`.git/hooks/post-commit`, `post-checkout`) — no manual rebuild needed in the common case.
+- If you've made many edits without committing, run `codegraph sync` before relying on the graph for those files.

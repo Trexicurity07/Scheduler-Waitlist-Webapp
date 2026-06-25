@@ -5,10 +5,10 @@
 ## Read this first, in order
 
 1. `docs/superpowers/specs/2026-06-23-calendar-waitlist-autofill-design.md` — the approved Phase 1 design spec (problem, architecture, 15 sections).
-2. `docs/superpowers/plans/2026-06-23-calendar-waitlist-autofill-plan.md` — the 24-task TDD implementation plan. **This is your actual work order.** It was written assuming you have zero prior context on this codebase: every task names exact files, contains complete test + implementation code, exact commands with expected output, and a "Consumes/Produces" block so later tasks don't require you to guess earlier tasks' types or signatures.
+2. `docs/superpowers/plans/2026-06-23-calendar-waitlist-autofill-tasks/00-overview.md` — Global Constraints, File Map, and the Task File Index for the 24-task TDD implementation plan. **This is your actual work order**, split one file per task (`01-scaffolding-env-validation.md` ... `24-dashboard-notification-history.md`, in the same folder) so you only need the current task's file in context. Every task file names exact files, contains complete test + implementation code, exact commands with expected output, and a "Consumes/Produces" block so later tasks don't require you to guess earlier tasks' types or signatures.
 3. `CLAUDE.md` at the repo root, if present (created by Task 1) — project-specific conventions.
 
-Both docs are already committed (`1394306` = design spec, `7088ed4` = plan). Don't re-run brainstorming or writing-plans — both phases are complete, approved, and the plan already went through a self-review pass (spec coverage, placeholder scan, cross-task type consistency) immediately before this handoff. Don't replan or restructure the task list.
+Both docs are already committed (`1394306` = design spec, `7088ed4` = plan; the plan was later split into the per-task files above for context efficiency, content unchanged). Don't re-run brainstorming or writing-plans — both phases are complete, approved, and the plan already went through a self-review pass (spec coverage, placeholder scan, cross-task type consistency) immediately before this handoff. Don't replan or restructure the task list.
 
 ## Goal
 
@@ -21,7 +21,7 @@ Invoke the `superpowers:subagent-driven-development` skill and execute the plan 
 ## Hard rules
 
 - **You are pre-authorized to run every `git commit` the plan calls for, without asking first.** The user has explicitly authorized this for this implementation pass. Local commits only — do **not** `git push` to any remote unless the user explicitly asks.
-- Follow the plan's "Global Constraints" section (top of the plan file) on every task: TypeScript strict mode, Node.js runtime only (never Edge — `googleapis`/`node:crypto` need it), no Calendar push webhooks, no monetization tiers, no automated E2E, replacement events have no attendee invite, only the dedicated bookings calendar is ever touched, `min_confirm_lead_hours < min_notice_hours` enforced wherever set, refresh tokens encrypted at rest (AES-256-GCM, key only in env, never logged/sent to client).
+- Follow the plan's "Global Constraints" section (top of `00-overview.md` in the tasks folder) on every task: TypeScript strict mode, Node.js runtime only (never Edge — `googleapis`/`node:crypto` need it), no Calendar push webhooks, no monetization tiers, no automated E2E, replacement events have no attendee invite, only the dedicated bookings calendar is ever touched, `min_confirm_lead_hours < min_notice_hours` enforced wherever set, refresh tokens encrypted at rest (AES-256-GCM, key only in env, never logged/sent to client).
 - The zero-cost constraint is load-bearing for the whole project — don't introduce any paid service, tier, or dependency not already named in the plan.
 - TDD strictly: never write implementation code before its failing test exists and has actually been run.
 - YAGNI / no scope creep: implement exactly what each task specifies. No extra abstractions, no opportunistic refactors, no speculative error handling or validation beyond what's written in that task.

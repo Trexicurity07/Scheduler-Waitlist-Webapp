@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createServiceRoleClient } from '@/lib/db/supabase'
-import { createTestBusiness, cleanupTestBusiness, createTestClientAndEntry } from './test-helpers'
+import { createTestBusiness, cleanupTestBusiness, createTestClientAndEntry, cleanupTestClient } from './test-helpers'
 import type { ClaimedBusiness } from './claim-businesses'
 
 const mockSendSlotOfferEmail = vi.fn()
@@ -33,6 +33,7 @@ function toClaimedBusiness(row: {
 
 describe('dispatch-offers (integration)', () => {
   const cleanups: { businessId: string; userId: string }[] = []
+  const clientCleanups: string[] = []
 
   beforeEach(() => {
     mockSendSlotOfferEmail.mockReset()
@@ -42,6 +43,9 @@ describe('dispatch-offers (integration)', () => {
 
   afterEach(async () => {
     const supabase = createServiceRoleClient()
+    while (clientCleanups.length > 0) {
+      await cleanupTestClient(supabase, clientCleanups.pop()!)
+    }
     while (cleanups.length > 0) {
       const next = cleanups.pop()!
       await cleanupTestBusiness(supabase, next.businessId, next.userId)
@@ -59,8 +63,9 @@ describe('dispatch-offers (integration)', () => {
   describe('resolveStaleOffers', () => {
     it('supersedes a sent offer and emails the client when the slot is retaken by a confirmed appointment', async () => {
       const { supabase, business, businessId } = await setupBusiness()
-      const { entryId, clientId } = await createTestClientAndEntry(supabase, businessId)
-      await supabase.from('clients').update({ email: 'client@example.com' }).eq('id', clientId)
+      const { entryId, userId: clientUserId } = await createTestClientAndEntry(supabase, businessId)
+      clientCleanups.push(clientUserId)
+      await supabase.from('client_profiles').update({ email: 'client@example.com' }).eq('user_id', clientUserId)
 
       const { data: cancelledAppt } = await supabase
         .from('appointments')
@@ -108,7 +113,8 @@ describe('dispatch-offers (integration)', () => {
 
     it('leaves a sent offer untouched when no overlapping confirmed appointment exists', async () => {
       const { supabase, business, businessId } = await setupBusiness()
-      const { entryId } = await createTestClientAndEntry(supabase, businessId)
+      const { entryId, userId: clientUserId } = await createTestClientAndEntry(supabase, businessId)
+      clientCleanups.push(clientUserId)
 
       const { data: cancelledAppt } = await supabase
         .from('appointments')
@@ -150,7 +156,8 @@ describe('dispatch-offers (integration)', () => {
   describe('expireTimedOutOffers', () => {
     it('expires a sent offer older than batch_interval_minutes', async () => {
       const { supabase, business, businessId } = await setupBusiness({ batch_interval_minutes: 30 })
-      const { entryId } = await createTestClientAndEntry(supabase, businessId)
+      const { entryId, userId: clientUserId } = await createTestClientAndEntry(supabase, businessId)
+      clientCleanups.push(clientUserId)
       const { data: appt } = await supabase
         .from('appointments')
         .insert({
@@ -191,7 +198,8 @@ describe('dispatch-offers (integration)', () => {
 
     it('does not expire a sent offer still within the batch interval', async () => {
       const { supabase, business, businessId } = await setupBusiness({ batch_interval_minutes: 30 })
-      const { entryId } = await createTestClientAndEntry(supabase, businessId)
+      const { entryId, userId: clientUserId } = await createTestClientAndEntry(supabase, businessId)
+      clientCleanups.push(clientUserId)
       const { data: appt } = await supabase
         .from('appointments')
         .insert({
@@ -236,14 +244,16 @@ describe('dispatch-offers (integration)', () => {
       const { supabase, business, businessId } = await setupBusiness({ batch_size: 1 })
       const window = [{ days: [0, 1, 2, 3, 4, 5, 6], start: '00:00', end: '23:59' }]
       const older = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
-      await supabase.from('clients').update({ email: 'older@example.com' }).eq('id', older.clientId)
+      clientCleanups.push(older.userId)
+      await supabase.from('client_profiles').update({ email: 'older@example.com' }).eq('user_id', older.userId)
       await supabase
         .from('waitlist_entries')
         .update({ created_at: '2026-01-01T00:00:00Z' })
         .eq('id', older.entryId)
 
       const newer = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
-      await supabase.from('clients').update({ email: 'newer@example.com' }).eq('id', newer.clientId)
+      clientCleanups.push(newer.userId)
+      await supabase.from('client_profiles').update({ email: 'newer@example.com' }).eq('user_id', newer.userId)
       await supabase
         .from('waitlist_entries')
         .update({ created_at: '2026-06-01T00:00:00Z' })
@@ -277,7 +287,8 @@ describe('dispatch-offers (integration)', () => {
     it('does not send a batch when the slot is closer than min_notice_hours', async () => {
       const { supabase, business, businessId } = await setupBusiness({ min_notice_hours: 24 })
       const window = [{ days: [0, 1, 2, 3, 4, 5, 6], start: '00:00', end: '23:59' }]
-      await createTestClientAndEntry(supabase, businessId, { time_windows: window })
+      const { userId: clientUserId } = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
+      clientCleanups.push(clientUserId)
 
       const now = new Date('2026-06-23T00:00:00Z')
       const { data: appt } = await supabase
@@ -305,7 +316,8 @@ describe('dispatch-offers (integration)', () => {
     it('does not send a new batch while one is already active for the slot', async () => {
       const { supabase, business, businessId } = await setupBusiness()
       const window = [{ days: [0, 1, 2, 3, 4, 5, 6], start: '00:00', end: '23:59' }]
-      const { entryId } = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
+      const { entryId, userId: clientUserId } = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
+      clientCleanups.push(clientUserId)
 
       const now = new Date('2026-06-23T00:00:00Z')
       const { data: appt } = await supabase
@@ -343,11 +355,13 @@ describe('dispatch-offers (integration)', () => {
       const { supabase, business, businessId } = await setupBusiness({ batch_size: 1 })
       const window = [{ days: [0, 1, 2, 3, 4, 5, 6], start: '00:00', end: '23:59' }]
       const first = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
-      await supabase.from('clients').update({ email: 'first@example.com' }).eq('id', first.clientId)
+      clientCleanups.push(first.userId)
+      await supabase.from('client_profiles').update({ email: 'first@example.com' }).eq('user_id', first.userId)
       await supabase.from('waitlist_entries').update({ created_at: '2026-01-01T00:00:00Z' }).eq('id', first.entryId)
 
       const second = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
-      await supabase.from('clients').update({ email: 'second@example.com' }).eq('id', second.clientId)
+      clientCleanups.push(second.userId)
+      await supabase.from('client_profiles').update({ email: 'second@example.com' }).eq('user_id', second.userId)
       await supabase.from('waitlist_entries').update({ created_at: '2026-02-01T00:00:00Z' }).eq('id', second.entryId)
 
       const now = new Date('2026-06-23T00:00:00Z')
@@ -388,7 +402,9 @@ describe('dispatch-offers (integration)', () => {
       const { supabase, business, businessId } = await setupBusiness()
       const window = [{ days: [0, 1, 2, 3, 4, 5, 6], start: '00:00', end: '23:59' }]
       const filledEntry = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
+      clientCleanups.push(filledEntry.userId)
       const otherEntry = await createTestClientAndEntry(supabase, businessId, { time_windows: window })
+      clientCleanups.push(otherEntry.userId)
 
       const now = new Date('2026-06-23T00:00:00Z')
       const { data: appt } = await supabase

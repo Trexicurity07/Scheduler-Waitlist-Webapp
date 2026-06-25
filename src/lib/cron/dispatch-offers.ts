@@ -60,10 +60,11 @@ export async function resolveStaleOffers(
         .eq('id', offer.waitlist_entry_id)
         .single()
       if (!entry) continue
-      const { data: client } = await supabase.from('clients').select('email').eq('id', entry.client_id).single()
-      if (!client) continue
+      const { data: clientRow } = await supabase.from('clients').select('client_profiles(email)').eq('id', entry.client_id).single()
+      const clientEmail = (clientRow?.client_profiles as { email: string } | null)?.email
+      if (!clientEmail) continue
 
-      await sendSlotGoneEmail(client.email, {
+      await sendSlotGoneEmail(clientEmail, {
         businessName: business.name,
         whatsappLink: buildWhatsAppLink(business.whatsapp_number, `Hi! Just checking in about ${business.name}.`),
       })
@@ -166,8 +167,9 @@ async function dispatchOfferForAppointment(
   for (const match of matched) {
     const entry = entries.find((e) => e.id === match.id)
     if (!entry) continue
-    const { data: client } = await supabase.from('clients').select('email').eq('id', entry.client_id).single()
-    if (!client) continue
+    const { data: clientRow } = await supabase.from('clients').select('client_profiles(email)').eq('id', entry.client_id).single()
+    const clientEmail = (clientRow?.client_profiles as { email: string } | null)?.email
+    if (!clientEmail) continue
 
     const token = generateToken()
     const confirmUrl = `${process.env.NEXT_PUBLIC_APP_URL}/confirm/${token}`
@@ -187,7 +189,7 @@ async function dispatchOfferForAppointment(
       batch_number: nextBatchNumber,
     })
 
-    await sendSlotOfferEmail(client.email, {
+    await sendSlotOfferEmail(clientEmail, {
       businessName: business.name,
       slotDescription,
       confirmUrl,

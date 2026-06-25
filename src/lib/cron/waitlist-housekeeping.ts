@@ -22,8 +22,10 @@ export async function expireWaitlistEntries(
   await supabase.from('waitlist_entries').update({ status: 'expired' }).in('id', entryIds)
 
   const clientIds = [...new Set(expiredEntries.map((entry) => entry.client_id))]
-  const { data: clients } = await supabase.from('clients').select('id, email').in('id', clientIds)
-  const emailByClientId = new Map((clients ?? []).map((client) => [client.id, client.email]))
+  const { data: clients } = await supabase.from('clients').select('id, client_profiles(email)').in('id', clientIds)
+  const emailByClientId = new Map(
+    (clients ?? []).map((c) => [c.id, (c.client_profiles as { email: string } | null)?.email ?? null])
+  )
 
   for (const entry of expiredEntries) {
     const email = emailByClientId.get(entry.client_id)

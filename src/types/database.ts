@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -82,6 +82,7 @@ export type Database = {
         Row: {
           batch_interval_minutes: number
           batch_size: number
+          business_type: string
           calendar_provider: string
           calendar_status: string
           created_at: string
@@ -102,6 +103,7 @@ export type Database = {
         Insert: {
           batch_interval_minutes?: number
           batch_size?: number
+          business_type?: string
           calendar_provider?: string
           calendar_status?: string
           created_at?: string
@@ -122,6 +124,7 @@ export type Database = {
         Update: {
           batch_interval_minutes?: number
           batch_size?: number
+          business_type?: string
           calendar_provider?: string
           calendar_status?: string
           created_at?: string
@@ -141,30 +144,54 @@ export type Database = {
         }
         Relationships: []
       }
+      client_profiles: {
+        Row: {
+          created_at: string
+          email: string
+          email_verification_token: string | null
+          name: string
+          phone: string
+          user_id: string
+          verified_at: string | null
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          email_verification_token?: string | null
+          name: string
+          phone: string
+          user_id: string
+          verified_at?: string | null
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          email_verification_token?: string | null
+          name?: string
+          phone?: string
+          user_id?: string
+          verified_at?: string | null
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           business_id: string
           created_at: string
-          email: string
           id: string
-          name: string
-          phone: string
+          user_id: string
         }
         Insert: {
           business_id: string
           created_at?: string
-          email: string
           id?: string
-          name: string
-          phone: string
+          user_id: string
         }
         Update: {
           business_id?: string
           created_at?: string
-          email?: string
           id?: string
-          name?: string
-          phone?: string
+          user_id?: string
         }
         Relationships: [
           {
@@ -173,6 +200,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "businesses"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "clients_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "client_profiles"
+            referencedColumns: ["user_id"]
           },
         ]
       }
@@ -235,37 +269,31 @@ export type Database = {
           business_id: string
           client_id: string
           created_at: string
-          email_verification_token: string | null
           expires_at: string
           id: string
           status: string
           time_windows: Json
           updated_at: string
-          verified_at: string | null
         }
         Insert: {
           business_id: string
           client_id: string
           created_at?: string
-          email_verification_token?: string | null
           expires_at: string
           id?: string
           status?: string
           time_windows: Json
           updated_at?: string
-          verified_at?: string | null
         }
         Update: {
           business_id?: string
           client_id?: string
           created_at?: string
-          email_verification_token?: string | null
           expires_at?: string
           id?: string
           status?: string
           time_windows?: Json
           updated_at?: string
-          verified_at?: string | null
         }
         Relationships: [
           {

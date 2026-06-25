@@ -147,7 +147,7 @@ async function dispatchOfferForAppointment(
   const entries = activeEntries ?? []
   const candidates: WaitlistEntryForMatching[] = entries
     .filter((e) => !alreadyNotifiedEntryIds.has(e.id))
-    .map((e) => ({ id: e.id, createdAt: new Date(e.created_at), timeWindows: e.time_windows as TimeWindow[] }))
+    .map((e) => ({ id: e.id, createdAt: new Date(e.created_at), timeWindows: e.time_windows as unknown as TimeWindow[] }))
 
   const slot: SlotToMatch = { startTime, timezone: business.timezone }
   const matched = matchWaitlistEntries(slot, candidates).slice(0, business.batch_size)

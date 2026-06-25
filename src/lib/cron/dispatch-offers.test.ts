@@ -15,6 +15,7 @@ import { resolveStaleOffers, expireTimedOutOffers, dispatchPendingOffers } from 
 
 function toClaimedBusiness(row: {
   id: string
+  owner_user_id: string
   name: string
   public_slug: string
   whatsapp_number: string

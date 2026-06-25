@@ -49,7 +49,8 @@ export async function joinWaitlist(
   let clientId: string
   if (emailClient) {
     clientId = emailClient.id
-    await supabase.from('clients').update({ name: input.name }).eq('id', clientId)
+    const { error: updateError } = await supabase.from('clients').update({ name: input.name }).eq('id', clientId)
+    if (updateError) return { ok: false, error: 'Could not update client record.' }
   } else {
     const { data: client, error: clientError } = await supabase
       .from('clients')

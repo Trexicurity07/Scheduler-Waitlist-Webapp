@@ -51,7 +51,7 @@ export async function createTestClientAndEntry(
       business_id: businessId,
       name: 'Test Client',
       email: `client-${Date.now()}-${Math.random().toString(36).slice(2)}@example.com`,
-      phone: '15559876543',
+      phone: `1555${Math.floor(1000000 + Math.random() * 8999999)}`,
     })
     .select('id')
     .single()

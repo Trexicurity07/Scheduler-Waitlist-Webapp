@@ -11,7 +11,7 @@ describe('passwordSchema', () => {
   })
 
   it('rejects passwords longer than 72 characters', () => {
-    expect(() => passwordSchema.parse(`a1${'a'.repeat(72)}`)).toThrow()
+    expect(() => passwordSchema.parse(`a1${'a'.repeat(71)}`)).toThrow()
   })
 
   it('rejects passwords with no letters', () => {

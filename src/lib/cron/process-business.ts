@@ -6,7 +6,7 @@ import { sendCalendarDisconnectedEmail } from '@/lib/notifications/email'
 import { releaseBusiness, type ClaimedBusiness } from './claim-businesses'
 import { syncAppointments } from './sync-appointments'
 import { resolveStaleOffers, expireTimedOutOffers, dispatchPendingOffers } from './dispatch-offers'
-import { expireWaitlistEntries, removeUnverifiedSignups } from './waitlist-housekeeping'
+import { expireWaitlistEntries } from './waitlist-housekeeping'
 
 function isAuthError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error)
@@ -28,7 +28,6 @@ export async function processBusiness(
     await expireTimedOutOffers(supabase, business, now)
     await dispatchPendingOffers(supabase, business, now)
     await expireWaitlistEntries(supabase, business, now)
-    await removeUnverifiedSignups(supabase, business, now)
   } catch (error) {
     if (isAuthError(error)) {
       await supabase.from('businesses').update({ calendar_status: 'disconnected' }).eq('id', business.id)

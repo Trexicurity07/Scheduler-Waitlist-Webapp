@@ -40,18 +40,3 @@ export async function expireWaitlistEntries(
     })
   }
 }
-
-export async function removeUnverifiedSignups(
-  supabase: SupabaseClient<Database>,
-  business: ClaimedBusiness,
-  now: Date
-): Promise<void> {
-  const cutoff = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString()
-
-  await supabase
-    .from('waitlist_entries')
-    .update({ status: 'removed' })
-    .eq('business_id', business.id)
-    .eq('status', 'pending_verification')
-    .lt('created_at', cutoff)
-}

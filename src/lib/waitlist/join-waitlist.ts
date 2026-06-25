@@ -1,5 +1,5 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
-import type { Database } from '@/types/database'
+import type { Database, Json } from '@/types/database'
 import type { TimeWindow } from '@/lib/matching/match-waitlist'
 import { generateToken } from '@/lib/tokens/generate-token'
 import { sendVerificationEmail } from '@/lib/notifications/email'
@@ -60,7 +60,7 @@ export async function joinWaitlist(
   const { error: entryError } = await supabase.from('waitlist_entries').insert({
     business_id: business.id,
     client_id: client.id,
-    time_windows: input.timeWindows,
+    time_windows: input.timeWindows as unknown as Json,
     status: 'pending_verification',
     email_verification_token: token,
     expires_at: expiresAt,

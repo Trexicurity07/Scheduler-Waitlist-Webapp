@@ -20,7 +20,13 @@ const requestSchema = z.object({
 })
 
 export async function POST(request: Request): Promise<NextResponse> {
-  const body = await request.json()
+  let body: unknown
+  try {
+    body = await request.json()
+  } catch {
+    return NextResponse.json({ ok: false, error: 'Invalid input' }, { status: 400 })
+  }
+
   const parsed = requestSchema.safeParse(body)
   if (!parsed.success) {
     return NextResponse.json({ ok: false, error: 'Invalid input' }, { status: 400 })

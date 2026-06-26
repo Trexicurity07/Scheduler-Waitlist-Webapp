@@ -8,6 +8,7 @@ import { completeSetup } from '@/lib/connect/complete-setup'
 
 const completeSchema = z.object({
   businessName: z.string().min(1),
+  businessType: z.string().min(1),
   whatsappNumber: z.string().min(1),
   createNewCalendar: z.boolean(),
   calendarId: z.string().optional(),

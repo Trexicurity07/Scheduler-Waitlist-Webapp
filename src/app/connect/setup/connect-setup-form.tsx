@@ -13,6 +13,7 @@ export default function ConnectSetupForm({ calendars }: { calendars: CalendarOpt
   const [calendarChoice, setCalendarChoice] = useState<string>(calendars[0]?.id ?? 'new')
   const [newCalendarName, setNewCalendarName] = useState('Client Bookings')
   const [businessName, setBusinessName] = useState('')
+  const [businessType, setBusinessType] = useState('')
   const [whatsappNumber, setWhatsappNumber] = useState('')
   const [error, setError] = useState<string | null>(null)
   const router = useRouter()
@@ -23,8 +24,8 @@ export default function ConnectSetupForm({ calendars }: { calendars: CalendarOpt
 
     const body =
       calendarChoice === 'new'
-        ? { createNewCalendar: true, newCalendarName, businessName, whatsappNumber }
-        : { createNewCalendar: false, calendarId: calendarChoice, businessName, whatsappNumber }
+        ? { createNewCalendar: true, newCalendarName, businessName, businessType, whatsappNumber }
+        : { createNewCalendar: false, calendarId: calendarChoice, businessName, businessType, whatsappNumber }
 
     const response = await fetch('/api/connect/complete', {
       method: 'POST',
@@ -82,6 +83,17 @@ export default function ConnectSetupForm({ calendars }: { calendars: CalendarOpt
       <label>
         Business name
         <input type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required />
+      </label>
+
+      <label>
+        Business type (e.g. Hair Salon, Dental Clinic)
+        <input
+          type="text"
+          name="business_type"
+          value={businessType}
+          onChange={(e) => setBusinessType(e.target.value)}
+          required
+        />
       </label>
 
       <label>

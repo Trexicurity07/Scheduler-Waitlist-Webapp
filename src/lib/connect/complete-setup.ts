@@ -9,6 +9,7 @@ export interface CompleteSetupInput {
   refreshToken: string
   calendars: { id: string; summary: string; timezone: string }[]
   businessName: string
+  businessType: string
   whatsappNumber: string
   createNewCalendar: boolean
   calendarId?: string
@@ -20,6 +21,10 @@ export async function completeSetup(
   provider: CalendarProvider,
   input: CompleteSetupInput
 ): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (input.businessType.trim().length === 0) {
+    return { ok: false, error: 'Business type is required' }
+  }
+
   let calendarId: string
   let timezone: string
 
@@ -49,6 +54,7 @@ export async function completeSetup(
   const { error } = await serviceRole.from('businesses').insert({
     owner_user_id: input.userId,
     name: input.businessName,
+    business_type: input.businessType,
     public_slug: candidate,
     whatsapp_number: input.whatsappNumber,
     timezone,

@@ -53,6 +53,7 @@ describe('completeSetup (integration)', () => {
       refreshToken: 'fake-refresh-token',
       calendars: [{ id: 'cal1', summary: 'Bookings', timezone: 'America/New_York' }],
       businessName: 'Jane Doe Salon',
+      businessType: 'Hair Salon',
       whatsappNumber: '+15551234567',
       createNewCalendar: false,
       calendarId: 'cal1',
@@ -73,6 +74,7 @@ describe('completeSetup (integration)', () => {
       refreshToken: 'fake-refresh-token',
       calendars: [],
       businessName: 'Jane Doe Salon',
+      businessType: 'Hair Salon',
       whatsappNumber: '+15551234567',
       createNewCalendar: true,
       newCalendarName: 'Client Bookings',
@@ -91,6 +93,7 @@ describe('completeSetup (integration)', () => {
       refreshToken: 'fake-refresh-token',
       calendars: [{ id: 'cal1', summary: 'Bookings', timezone: 'America/New_York' }],
       businessName: 'Jane Doe Salon',
+      businessType: 'Hair Salon',
       whatsappNumber: '+15551234567',
       createNewCalendar: false,
       calendarId: 'cal1',
@@ -110,6 +113,7 @@ describe('completeSetup (integration)', () => {
       refreshToken: 'fake-refresh-token',
       calendars: [{ id: 'cal2', summary: 'Bookings', timezone: 'America/New_York' }],
       businessName: 'Jane Doe Salon',
+      businessType: 'Hair Salon',
       whatsappNumber: '+15551234567',
       createNewCalendar: false,
       calendarId: 'cal2',
@@ -132,9 +136,25 @@ describe('completeSetup (integration)', () => {
       refreshToken: 'fake-refresh-token',
       calendars: [{ id: 'cal1', summary: 'Bookings', timezone: 'America/New_York' }],
       businessName: 'Jane Doe Salon',
+      businessType: 'Hair Salon',
       whatsappNumber: '+15551234567',
       createNewCalendar: false,
       calendarId: 'does-not-exist',
+    })
+    expect(result.ok).toBe(false)
+  })
+
+  it('rejects missing business_type', async () => {
+    const supabase = createServiceRoleClient()
+    const result = await completeSetup(supabase, fakeProvider(), {
+      userId,
+      refreshToken: 'fake-refresh-token',
+      calendars: [{ id: 'cal1', summary: 'Bookings', timezone: 'America/New_York' }],
+      businessName: 'Jane Doe Salon',
+      businessType: '',
+      whatsappNumber: '+15551234567',
+      createNewCalendar: false,
+      calendarId: 'cal1',
     })
     expect(result.ok).toBe(false)
   })

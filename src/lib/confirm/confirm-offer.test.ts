@@ -1,8 +1,15 @@
-import { describe, it, expect, afterEach, vi } from 'vitest'
+import { describe, it, expect, afterEach, beforeEach, vi } from 'vitest'
 import { createServiceRoleClient } from '@/lib/db/supabase'
 import { createTestBusiness, cleanupTestBusiness, createTestClientAndEntry, cleanupTestClient } from '@/lib/cron/test-helpers'
-import { getOfferDetails, confirmOffer, declineOffer } from './confirm-offer'
 import type { CalendarProvider, CreateEventInput, CalendarEvent } from '@/lib/calendar/provider'
+
+const mockSendDeclineAckEmail = vi.fn()
+
+vi.mock('@/lib/notifications/email', () => ({
+  sendDeclineAckEmail: (...args: unknown[]) => mockSendDeclineAckEmail(...args),
+}))
+
+const { getOfferDetails, confirmOffer, declineOffer } = await import('./confirm-offer')
 
 function fakeProvider(createEventImpl?: CalendarProvider['createEvent']): CalendarProvider {
   return {
@@ -27,6 +34,10 @@ function fakeProvider(createEventImpl?: CalendarProvider['createEvent']): Calend
 describe('confirm-offer (integration)', () => {
   const cleanups: { businessId: string; userId: string }[] = []
   const clientCleanups: string[] = []
+
+  beforeEach(() => {
+    mockSendDeclineAckEmail.mockReset()
+  })
 
   afterEach(async () => {
     const supabase = createServiceRoleClient()
@@ -284,6 +295,17 @@ describe('confirm-offer (integration)', () => {
       const { supabase, token } = await setupOffer({ notificationStatus: 'declined' })
       const result = await declineOffer(supabase, token, new Date('2026-07-01T00:00:00Z'))
       expect(result).toEqual({ ok: false, reason: 'already_declined' })
+    })
+
+    it('sends a decline-ack email to the client', async () => {
+      const { supabase, token } = await setupOffer()
+      const result = await declineOffer(supabase, token, new Date('2026-07-01T00:00:00Z'))
+      expect(result).toEqual({ ok: true })
+
+      expect(mockSendDeclineAckEmail).toHaveBeenCalledWith(
+        'client@example.com',
+        expect.objectContaining({ businessName: 'Test Business' })
+      )
     })
   })
 })

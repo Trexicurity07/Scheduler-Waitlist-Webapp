@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 import type { CalendarProvider } from '@/lib/calendar/provider'
+import { sendDeclineAckEmail } from '@/lib/notifications/email'
 
 export interface OfferDetails {
   businessName: string
@@ -188,6 +189,16 @@ export async function declineOffer(
     .maybeSingle()
   if (!claimed) {
     return { ok: false, reason: 'gone' }
+  }
+
+  const clientEmail = offer.waitlist_entries?.clients?.client_profiles?.email
+  if (clientEmail) {
+    try {
+      const business = await fetchBusiness(supabase, offer.waitlist_entries!.business_id)
+      await sendDeclineAckEmail(clientEmail, { businessName: business.name })
+    } catch (err) {
+      console.error('Failed to send decline-ack email', err)
+    }
   }
 
   return { ok: true }

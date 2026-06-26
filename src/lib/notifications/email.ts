@@ -78,6 +78,18 @@ export async function sendSlotGoneEmail(
   })
 }
 
+export async function sendDeclineAckEmail(
+  to: string,
+  params: { businessName: string }
+): Promise<void> {
+  await getClient().emails.send({
+    from: process.env.RESEND_FROM_EMAIL!,
+    to,
+    subject: `Your slot decline was received`,
+    html: `<p>We've received your decline. The slot has been released back to ${params.businessName}, and you remain on the waitlist for future openings.</p>`,
+  })
+}
+
 export async function sendCalendarDisconnectedEmail(
   to: string,
   params: { businessName: string; reconnectUrl: string }

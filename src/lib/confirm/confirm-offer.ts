@@ -122,6 +122,22 @@ export async function confirmOffer(
     return { ok: false, reason: 'gone' }
   }
 
+  // Atomically claim the appointment itself: only one concurrent request for
+  // sibling notification tokens (same appointment_id, different client_id)
+  // can flip status cancelled -> confirmed. This closes the TOCTOU window
+  // that existed when the appointment's status was only read via a plain
+  // SELECT (in fetchOfferRow) before later writes.
+  const { data: claimedAppointment } = await supabase
+    .from('appointments')
+    .update({ status: 'confirmed' })
+    .eq('id', appointment.id)
+    .eq('status', 'cancelled')
+    .select('id')
+    .maybeSingle()
+  if (!claimedAppointment) {
+    return { ok: false, reason: 'gone' }
+  }
+
   const { data: claimed } = await supabase
     .from('notifications')
     .update({ status: 'confirmed', responded_at: now.toISOString() })

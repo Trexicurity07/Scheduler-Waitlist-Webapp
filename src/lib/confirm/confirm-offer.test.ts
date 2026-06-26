@@ -175,6 +175,72 @@ describe('confirm-offer (integration)', () => {
       expect(second).toEqual({ ok: false, reason: 'already_confirmed' })
     })
 
+    it('rejects one of two concurrent confirms for sibling notifications on the same appointment (TOCTOU race)', async () => {
+      // Regression test for the race where two sibling notification tokens
+      // (same appointment_id, different client_id) could both pass the
+      // appointment status check before either write landed, double-booking
+      // the slot (two calendar events, two filled waitlist entries). The
+      // atomic `appointments` UPDATE (cancelled -> confirmed, gated on the
+      // current row still being 'cancelled') must let exactly one of the two
+      // concurrent confirms succeed.
+      const { supabase, entryId, appointmentId, token } = await setupOffer()
+
+      const { data: sibling } = await supabase
+        .from('notifications')
+        .insert({
+          waitlist_entry_id: entryId,
+          appointment_id: appointmentId,
+          type: 'slot_offer',
+          status: 'sent',
+          token: `${token}-sibling`,
+          batch_number: 1,
+        })
+        .select('id, token')
+        .single()
+
+      const createEventA = vi.fn(async (_calendarId: string, input: CreateEventInput): Promise<CalendarEvent> => ({
+        providerEventId: 'evt-a',
+        summary: input.summary,
+        startTime: input.startTime,
+        endTime: input.endTime,
+        status: 'confirmed',
+      }))
+      const createEventB = vi.fn(async (_calendarId: string, input: CreateEventInput): Promise<CalendarEvent> => ({
+        providerEventId: 'evt-b',
+        summary: input.summary,
+        startTime: input.startTime,
+        endTime: input.endTime,
+        status: 'confirmed',
+      }))
+
+      const [resultA, resultB] = await Promise.all([
+        confirmOffer(supabase, token, fakeProvider(createEventA), new Date('2026-07-01T00:00:00Z')),
+        confirmOffer(supabase, sibling!.token!, fakeProvider(createEventB), new Date('2026-07-01T00:00:00Z')),
+      ])
+
+      const results = [resultA, resultB]
+      const succeeded = results.filter((r) => r.ok)
+      const failed = results.filter((r) => !r.ok)
+
+      // Exactly one of the two concurrent confirms must win.
+      expect(succeeded.length).toBe(1)
+      expect(failed.length).toBe(1)
+      expect(failed[0]).toEqual({ ok: false, reason: 'gone' })
+
+      // Exactly one calendar event must have been created across both calls.
+      expect(createEventA.mock.calls.length + createEventB.mock.calls.length).toBe(1)
+
+      const { data: appointment } = await supabase
+        .from('appointments')
+        .select('status')
+        .eq('id', appointmentId)
+        .single()
+      expect(appointment?.status).toBe('confirmed')
+
+      const { data: entry } = await supabase.from('waitlist_entries').select('status').eq('id', entryId).single()
+      expect(entry?.status).toBe('filled')
+    })
+
     it('rejects confirm when a sibling notification already confirmed the same appointment', async () => {
       const { supabase, entryId, appointmentId, token } = await setupOffer()
       await supabase.from('notifications').insert({

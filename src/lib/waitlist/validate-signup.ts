@@ -1,13 +1,12 @@
 import { z } from 'zod'
 
 const NAME_PATTERN = /^(?=.*[\p{L}])[\p{L}\s'.-]+$/u
-const PHONE_PATTERN = /^\+?\d{7,15}$/
 
 export const nameSchema = z
   .string()
   .trim()
   .min(2, 'Name must be at least 2 characters')
-  .max(100, 'Name must be at most 100 characters')
+  .max(60, 'Name must be at most 60 characters')
   .regex(NAME_PATTERN, 'Name may only contain letters, spaces, hyphens, apostrophes, and periods')
 
 export const emailSchema = z
@@ -20,5 +19,10 @@ export const emailSchema = z
 export const phoneSchema = z
   .string()
   .trim()
-  .transform((value) => value.replace(/[\s().-]/g, ''))
-  .pipe(z.string().regex(PHONE_PATTERN, 'Invalid phone number'))
+  .regex(/^\+?[0-9]+$/, 'Phone may only contain digits and an optional leading +')
+  .transform((value) => value.replace(/^\+/, ''))
+  .pipe(
+    z.string()
+      .min(7, 'Phone number is too short (minimum 7 digits)')
+      .max(15, 'Phone number is too long (maximum 15 digits)')
+  )

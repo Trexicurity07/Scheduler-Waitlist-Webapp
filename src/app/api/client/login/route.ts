@@ -10,6 +10,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: 'Missing credentials.' }, { status: 400 })
   }
 
+  const serviceSupabase = createServiceRoleClient()
   let email: string
   const isEmail = emailSchema.safeParse(identifier).success
   const isPhone = phoneSchema.safeParse(identifier).success
@@ -17,19 +18,32 @@ export async function POST(req: Request) {
   if (isEmail) {
     email = identifier
   } else if (isPhone) {
-    const serviceSupabase = createServiceRoleClient()
+    const normalizedPhone = identifier.replace(/^\+/, '')
     const { data: profile } = await serviceSupabase
       .from('client_profiles')
       .select('email')
-      .eq('phone', identifier)
+      .eq('phone', normalizedPhone)
       .maybeSingle()
     if (!profile) return NextResponse.json({ error: 'No account found.' }, { status: 400 })
     email = profile.email
   } else {
-    return NextResponse.json({ error: 'Enter a valid email or phone number.' }, { status: 400 })
+    // Name fallback: case-insensitive exact match
+    const { data: profiles } = await serviceSupabase
+      .from('client_profiles')
+      .select('email')
+      .ilike('name', identifier)
+    if (!profiles || profiles.length === 0) {
+      return NextResponse.json({ error: 'No account found.' }, { status: 400 })
+    }
+    if (profiles.length > 1) {
+      return NextResponse.json(
+        { error: 'Multiple accounts found with that name. Please use email or phone.' },
+        { status: 400 }
+      )
+    }
+    email = profiles[0].email
   }
 
-  const serviceSupabase = createServiceRoleClient()
   const { data: profile } = await serviceSupabase
     .from('client_profiles')
     .select('verified_at')

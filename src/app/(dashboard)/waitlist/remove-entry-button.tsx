@@ -15,7 +15,21 @@ export function RemoveEntryButton({ entryId }: { entryId: string }) {
   }
 
   return (
-    <button onClick={handleRemove} disabled={pending}>
+    <button
+      onClick={handleRemove}
+      disabled={pending}
+      style={{
+        padding: '0.3rem 0.7rem',
+        backgroundColor: 'transparent',
+        border: '1px solid #fca5a5',
+        borderRadius: '5px',
+        color: pending ? '#94a3b8' : '#dc2626',
+        fontSize: '0.75rem',
+        fontWeight: 500,
+        cursor: pending ? 'default' : 'pointer',
+        flexShrink: 0,
+      }}
+    >
       {pending ? 'Removing…' : 'Remove'}
     </button>
   )

@@ -90,6 +90,30 @@ export async function sendDeclineAckEmail(
   })
 }
 
+export async function sendPasswordResetEmail(
+  to: string,
+  params: { code: string; expiryMinutes: number }
+): Promise<void> {
+  await getClient().emails.send({
+    from: process.env.RESEND_FROM_EMAIL!,
+    to,
+    subject: 'Your SlotFill password reset code',
+    html: `<p>Your password reset code is:</p>
+<p style="font-size:2em;font-weight:bold;letter-spacing:0.25em">${params.code}</p>
+<p>This code expires in ${params.expiryMinutes} minutes. Do not share it with anyone.</p>
+<p>If you did not request a password reset, you can safely ignore this email.</p>`,
+  })
+}
+
+export async function sendPasswordChangedEmail(to: string): Promise<void> {
+  await getClient().emails.send({
+    from: process.env.RESEND_FROM_EMAIL!,
+    to,
+    subject: 'Your SlotFill password was changed',
+    html: `<p>Your SlotFill password was just changed. If this wasn't you, please contact us immediately.</p>`,
+  })
+}
+
 export async function sendCalendarDisconnectedEmail(
   to: string,
   params: { businessName: string; reconnectUrl: string }

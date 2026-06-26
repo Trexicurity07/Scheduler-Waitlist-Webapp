@@ -153,6 +153,10 @@ export type Database = {
           phone: string
           user_id: string
           verified_at: string | null
+          password_reset_token: string | null
+          password_reset_expires_at: string | null
+          password_reset_session: string | null
+          password_reset_attempts: number
         }
         Insert: {
           created_at?: string
@@ -162,6 +166,10 @@ export type Database = {
           phone: string
           user_id: string
           verified_at?: string | null
+          password_reset_token?: string | null
+          password_reset_expires_at?: string | null
+          password_reset_session?: string | null
+          password_reset_attempts?: number
         }
         Update: {
           created_at?: string
@@ -171,6 +179,10 @@ export type Database = {
           phone?: string
           user_id?: string
           verified_at?: string | null
+          password_reset_token?: string | null
+          password_reset_expires_at?: string | null
+          password_reset_session?: string | null
+          password_reset_attempts?: number
         }
         Relationships: []
       }
@@ -209,6 +221,39 @@ export type Database = {
             referencedColumns: ["user_id"]
           },
         ]
+      }
+      owner_profiles: {
+        Row: {
+          auth_user_id: string
+          business_name: string
+          email: string
+          created_at: string
+          password_reset_token: string | null
+          password_reset_expires_at: string | null
+          password_reset_session: string | null
+          password_reset_attempts: number
+        }
+        Insert: {
+          auth_user_id: string
+          business_name: string
+          email: string
+          created_at?: string
+          password_reset_token?: string | null
+          password_reset_expires_at?: string | null
+          password_reset_session?: string | null
+          password_reset_attempts?: number
+        }
+        Update: {
+          auth_user_id?: string
+          business_name?: string
+          email?: string
+          created_at?: string
+          password_reset_token?: string | null
+          password_reset_expires_at?: string | null
+          password_reset_session?: string | null
+          password_reset_attempts?: number
+        }
+        Relationships: []
       }
       notifications: {
         Row: {

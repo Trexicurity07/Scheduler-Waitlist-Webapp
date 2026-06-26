@@ -19,8 +19,8 @@ describe('nameSchema', () => {
     expect(() => nameSchema.parse('A')).toThrow()
   })
 
-  it('rejects names longer than 100 characters', () => {
-    expect(() => nameSchema.parse('A'.repeat(101))).toThrow()
+  it('rejects names longer than 60 characters', () => {
+    expect(() => nameSchema.parse('A'.repeat(61))).toThrow()
   })
 
   it('rejects names with no letters', () => {
@@ -53,8 +53,14 @@ describe('phoneSchema', () => {
     expect(phoneSchema.parse('15551234567')).toBe('15551234567')
   })
 
-  it('accepts a leading + and strips spaces, dashes, and parentheses', () => {
-    expect(phoneSchema.parse('+1 (555) 123-4567')).toBe('+15551234567')
+  it('accepts a leading + and normalises to digits only', () => {
+    expect(phoneSchema.parse('+15551234567')).toBe('15551234567')
+  })
+
+  it('rejects phone numbers with spaces, hyphens, or parentheses', () => {
+    expect(() => phoneSchema.parse('+1 (555) 123-4567')).toThrow()
+    expect(() => phoneSchema.parse('555-123-4567')).toThrow()
+    expect(() => phoneSchema.parse('(555) 1234567')).toThrow()
   })
 
   it('rejects phone numbers shorter than 7 digits', () => {
@@ -62,10 +68,14 @@ describe('phoneSchema', () => {
   })
 
   it('rejects phone numbers longer than 15 digits', () => {
-    expect(() => phoneSchema.parse('1234567890123456')).toThrow()
+    expect(() => phoneSchema.parse('1'.repeat(16))).toThrow()
   })
 
   it('rejects phone numbers containing letters', () => {
     expect(() => phoneSchema.parse('555CALLNOW')).toThrow()
+  })
+
+  it('rejects + in any position other than the first character', () => {
+    expect(() => phoneSchema.parse('1555+234567')).toThrow()
   })
 })

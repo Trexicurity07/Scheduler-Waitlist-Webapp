@@ -1,4 +1,4 @@
-﻿export type Json =
+export type Json =
   | string
   | number
   | boolean
@@ -142,47 +142,58 @@ export type Database = {
           updated_at?: string
           whatsapp_number?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "businesses_owner_user_id_fkey"
+            columns: ["owner_user_id"]
+            isOneToOne: true
+            referencedRelation: "owner_profiles"
+            referencedColumns: ["auth_user_id"]
+          },
+        ]
       }
       client_profiles: {
         Row: {
           created_at: string
           email: string
-          email_verification_token: string | null
           name: string
-          phone: string
-          user_id: string
-          verified_at: string | null
-          password_reset_token: string | null
+          password_hash: string | null
+          password_reset_attempts: number
           password_reset_expires_at: string | null
           password_reset_session: string | null
-          password_reset_attempts: number
+          password_reset_token: string | null
+          phone: string
+          session_expires_at: string | null
+          session_token: string | null
+          user_id: string
         }
         Insert: {
           created_at?: string
           email: string
-          email_verification_token?: string | null
           name: string
-          phone: string
-          user_id: string
-          verified_at?: string | null
-          password_reset_token?: string | null
+          password_hash?: string | null
+          password_reset_attempts?: number
           password_reset_expires_at?: string | null
           password_reset_session?: string | null
-          password_reset_attempts?: number
+          password_reset_token?: string | null
+          phone: string
+          session_expires_at?: string | null
+          session_token?: string | null
+          user_id: string
         }
         Update: {
           created_at?: string
           email?: string
-          email_verification_token?: string | null
           name?: string
-          phone?: string
-          user_id?: string
-          verified_at?: string | null
-          password_reset_token?: string | null
+          password_hash?: string | null
+          password_reset_attempts?: number
           password_reset_expires_at?: string | null
           password_reset_session?: string | null
-          password_reset_attempts?: number
+          password_reset_token?: string | null
+          phone?: string
+          session_expires_at?: string | null
+          session_token?: string | null
+          user_id?: string
         }
         Relationships: []
       }
@@ -222,38 +233,56 @@ export type Database = {
           },
         ]
       }
-      owner_profiles: {
+      location_nodes: {
         Row: {
-          auth_user_id: string
-          business_name: string
-          email: string
+          address: string | null
+          business_id: string
           created_at: string
-          password_reset_token: string | null
-          password_reset_expires_at: string | null
-          password_reset_session: string | null
-          password_reset_attempts: number
+          description: string | null
+          id: string
+          name: string
+          parent_id: string | null
+          sort_order: number
+          type: string
         }
         Insert: {
-          auth_user_id: string
-          business_name: string
-          email: string
+          address?: string | null
+          business_id: string
           created_at?: string
-          password_reset_token?: string | null
-          password_reset_expires_at?: string | null
-          password_reset_session?: string | null
-          password_reset_attempts?: number
+          description?: string | null
+          id?: string
+          name: string
+          parent_id?: string | null
+          sort_order?: number
+          type: string
         }
         Update: {
-          auth_user_id?: string
-          business_name?: string
-          email?: string
+          address?: string | null
+          business_id?: string
           created_at?: string
-          password_reset_token?: string | null
-          password_reset_expires_at?: string | null
-          password_reset_session?: string | null
-          password_reset_attempts?: number
+          description?: string | null
+          id?: string
+          name?: string
+          parent_id?: string | null
+          sort_order?: number
+          type?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "location_nodes_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "location_nodes_parent_id_fkey"
+            columns: ["parent_id"]
+            isOneToOne: false
+            referencedRelation: "location_nodes"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {
@@ -309,6 +338,96 @@ export type Database = {
           },
         ]
       }
+      owner_profiles: {
+        Row: {
+          auth_user_id: string
+          business_name: string
+          created_at: string
+          email: string
+          password_hash: string | null
+          password_reset_attempts: number
+          password_reset_expires_at: string | null
+          password_reset_session: string | null
+          password_reset_token: string | null
+          plan_tier: string
+          session_expires_at: string | null
+          session_token: string | null
+        }
+        Insert: {
+          auth_user_id: string
+          business_name: string
+          created_at?: string
+          email: string
+          password_hash?: string | null
+          password_reset_attempts?: number
+          password_reset_expires_at?: string | null
+          password_reset_session?: string | null
+          password_reset_token?: string | null
+          plan_tier?: string
+          session_expires_at?: string | null
+          session_token?: string | null
+        }
+        Update: {
+          auth_user_id?: string
+          business_name?: string
+          created_at?: string
+          email?: string
+          password_hash?: string | null
+          password_reset_attempts?: number
+          password_reset_expires_at?: string | null
+          password_reset_session?: string | null
+          password_reset_token?: string | null
+          plan_tier?: string
+          session_expires_at?: string | null
+          session_token?: string | null
+        }
+        Relationships: []
+      }
+      pending_signups: {
+        Row: {
+          account_type: string
+          business_name: string | null
+          created_at: string | null
+          email: string
+          expires_at: string
+          id: string
+          name: string | null
+          password_hash: string
+          payment_session: string | null
+          phone: string | null
+          plan_tier: string
+          verification_code: string
+        }
+        Insert: {
+          account_type: string
+          business_name?: string | null
+          created_at?: string | null
+          email: string
+          expires_at: string
+          id?: string
+          name?: string | null
+          password_hash: string
+          payment_session?: string | null
+          phone?: string | null
+          plan_tier?: string
+          verification_code: string
+        }
+        Update: {
+          account_type?: string
+          business_name?: string | null
+          created_at?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          name?: string | null
+          password_hash?: string
+          payment_session?: string | null
+          phone?: string | null
+          plan_tier?: string
+          verification_code?: string
+        }
+        Relationships: []
+      }
       waitlist_entries: {
         Row: {
           business_id: string
@@ -319,6 +438,7 @@ export type Database = {
           status: string
           time_windows: Json
           updated_at: string
+          waitlist_id: string | null
         }
         Insert: {
           business_id: string
@@ -329,6 +449,7 @@ export type Database = {
           status?: string
           time_windows: Json
           updated_at?: string
+          waitlist_id?: string | null
         }
         Update: {
           business_id?: string
@@ -339,6 +460,7 @@ export type Database = {
           status?: string
           time_windows?: Json
           updated_at?: string
+          waitlist_id?: string | null
         }
         Relationships: [
           {
@@ -353,6 +475,88 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlist_entries_waitlist_id_fkey"
+            columns: ["waitlist_id"]
+            isOneToOne: false
+            referencedRelation: "waitlists"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      waitlists: {
+        Row: {
+          batch_interval_minutes: number
+          batch_size: number
+          business_id: string
+          calendar_status: string
+          created_at: string
+          dedicated_calendar_id: string | null
+          description: string | null
+          google_refresh_token_encrypted: string | null
+          id: string
+          min_confirm_lead_hours: number
+          min_notice_hours: number
+          name: string
+          node_id: string
+          public_slug: string
+          sort_order: number
+          timezone: string
+          updated_at: string
+        }
+        Insert: {
+          batch_interval_minutes?: number
+          batch_size?: number
+          business_id: string
+          calendar_status?: string
+          created_at?: string
+          dedicated_calendar_id?: string | null
+          description?: string | null
+          google_refresh_token_encrypted?: string | null
+          id?: string
+          min_confirm_lead_hours?: number
+          min_notice_hours?: number
+          name: string
+          node_id: string
+          public_slug: string
+          sort_order?: number
+          timezone?: string
+          updated_at?: string
+        }
+        Update: {
+          batch_interval_minutes?: number
+          batch_size?: number
+          business_id?: string
+          calendar_status?: string
+          created_at?: string
+          dedicated_calendar_id?: string | null
+          description?: string | null
+          google_refresh_token_encrypted?: string | null
+          id?: string
+          min_confirm_lead_hours?: number
+          min_notice_hours?: number
+          name?: string
+          node_id?: string
+          public_slug?: string
+          sort_order?: number
+          timezone?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "waitlists_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "waitlists_node_id_fkey"
+            columns: ["node_id"]
+            isOneToOne: false
+            referencedRelation: "location_nodes"
             referencedColumns: ["id"]
           },
         ]

@@ -93,6 +93,12 @@ describe('buildTree', () => {
         name: 'Haircuts',
         description: null,
         calendar_status: 'connected',
+        dedicated_calendar_id: null,
+        batch_size: 3,
+        batch_interval_minutes: 60,
+        min_notice_hours: 24,
+        min_confirm_lead_hours: 2,
+        timezone: 'UTC',
         sort_order: 0,
       },
     ]

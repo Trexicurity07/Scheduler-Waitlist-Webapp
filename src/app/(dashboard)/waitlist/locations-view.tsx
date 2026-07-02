@@ -8,7 +8,6 @@ import { WaitlistSetupModal } from '@/components/waitlist-setup-modal'
 
 interface Props {
   tree: LocationTreeNode[]
-  businessId: string
   calendarConnected?: boolean
   nodeId?: string
 }
@@ -595,12 +594,12 @@ export function LocationsView({ tree, calendarConnected, nodeId }: Props) {
             name: modal.waitlist.name,
             description: modal.waitlist.description,
             calendar_status: modal.waitlist.calendar_status,
-            dedicated_calendar_id: null,
-            batch_size: 3,
-            batch_interval_minutes: 60,
-            min_notice_hours: 24,
-            min_confirm_lead_hours: 2,
-            timezone: 'UTC',
+            dedicated_calendar_id: modal.waitlist.dedicated_calendar_id,
+            batch_size: modal.waitlist.batch_size,
+            batch_interval_minutes: modal.waitlist.batch_interval_minutes,
+            min_notice_hours: modal.waitlist.min_notice_hours,
+            min_confirm_lead_hours: modal.waitlist.min_confirm_lead_hours,
+            timezone: modal.waitlist.timezone,
           }}
           onClose={() => setModal({ kind: 'none' })}
           onSuccess={handleSuccess}

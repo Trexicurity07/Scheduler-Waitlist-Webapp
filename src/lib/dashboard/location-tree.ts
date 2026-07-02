@@ -6,6 +6,12 @@ export interface WaitlistSummary {
   name: string
   description: string | null
   calendar_status: 'pending' | 'connected' | 'disconnected'
+  dedicated_calendar_id: string | null
+  batch_size: number
+  batch_interval_minutes: number
+  min_notice_hours: number
+  min_confirm_lead_hours: number
+  timezone: string
   sort_order: number
 }
 
@@ -49,6 +55,12 @@ export function buildTree(
     name: string
     description: string | null
     calendar_status: string
+    dedicated_calendar_id: string | null
+    batch_size: number
+    batch_interval_minutes: number
+    min_notice_hours: number
+    min_confirm_lead_hours: number
+    timezone: string
     sort_order: number
   }>
 ): LocationTreeNode[] {
@@ -76,6 +88,12 @@ export function buildTree(
       name: waitlist.name,
       description: waitlist.description,
       calendar_status: waitlist.calendar_status as WaitlistSummary['calendar_status'],
+      dedicated_calendar_id: waitlist.dedicated_calendar_id,
+      batch_size: waitlist.batch_size,
+      batch_interval_minutes: waitlist.batch_interval_minutes,
+      min_notice_hours: waitlist.min_notice_hours,
+      min_confirm_lead_hours: waitlist.min_confirm_lead_hours,
+      timezone: waitlist.timezone,
       sort_order: waitlist.sort_order,
     })
   }
@@ -107,7 +125,7 @@ export async function fetchLocationTree(
     supabase.from('location_nodes').select('*').eq('business_id', businessId),
     supabase
       .from('waitlists')
-      .select('id, node_id, name, description, calendar_status, sort_order')
+      .select('id, node_id, name, description, calendar_status, dedicated_calendar_id, batch_size, batch_interval_minutes, min_notice_hours, min_confirm_lead_hours, timezone, sort_order')
       .eq('business_id', businessId),
   ])
   return buildTree(nodes ?? [], waitlists ?? [])

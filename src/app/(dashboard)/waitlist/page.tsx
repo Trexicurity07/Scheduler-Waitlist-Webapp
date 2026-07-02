@@ -23,7 +23,6 @@ export default async function WaitlistPage({ searchParams }: PageProps) {
   return (
     <LocationsView
       tree={tree}
-      businessId={business.id}
       calendarConnected={calendarConnected}
       nodeId={nodeId}
     />

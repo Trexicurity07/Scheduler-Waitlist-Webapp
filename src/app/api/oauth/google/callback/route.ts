@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { google } from 'googleapis'
-import { encrypt } from '@/lib/crypto/encrypt'
+import { encrypt, decrypt } from '@/lib/crypto/encrypt'
 import { GoogleCalendarProvider } from '@/lib/calendar/google-provider'
 
 export async function GET(request: NextRequest) {
@@ -22,10 +22,27 @@ export async function GET(request: NextRequest) {
   const provider = new GoogleCalendarProvider(tokens.refresh_token)
   const calendars = await provider.listCalendars()
 
-  const payload = JSON.stringify({ refreshToken: tokens.refresh_token, calendars })
+  // Read and merge pending_connect_ctx if present
+  let ctx: { context?: string; nodeId?: string; waitlistId?: string } = {}
+  const ctxCookie = request.cookies.get('pending_connect_ctx')?.value
+  if (ctxCookie) {
+    try { ctx = JSON.parse(decrypt(ctxCookie)) } catch {}
+  }
+
+  const payload = JSON.stringify({ refreshToken: tokens.refresh_token, calendars, ...ctx })
   const encrypted = encrypt(payload)
 
-  const response = NextResponse.redirect(new URL('/connect/setup', request.url))
+  // Choose redirect based on context
+  let redirectUrl: URL
+  if (ctx.context === 'relink' && ctx.waitlistId) {
+    redirectUrl = new URL(`/waitlist/${ctx.waitlistId}?calendarConnected=1`, request.url)
+  } else if (ctx.context === 'new-waitlist') {
+    redirectUrl = new URL('/waitlist?calendarConnected=1', request.url)
+  } else {
+    redirectUrl = new URL('/connect/setup', request.url)
+  }
+
+  const response = NextResponse.redirect(redirectUrl)
   response.cookies.set('pending_connect', encrypted, {
     httpOnly: true,
     secure: true,
@@ -33,5 +50,6 @@ export async function GET(request: NextRequest) {
     maxAge: 600,
     path: '/',
   })
+  response.cookies.delete('pending_connect_ctx')
   return response
 }

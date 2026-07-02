@@ -10,6 +10,10 @@ const REASON_MESSAGES: Record<OfferFailureReason, string> = {
   gone: 'This slot is no longer available.',
 }
 
+const pageStyle = { maxWidth: '480px', margin: '6rem auto', padding: '0 1.5rem' }
+const headingStyle = { fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: '0 0 0.5rem' }
+const textStyle = { color: '#94a3b8', fontSize: '0.875rem', lineHeight: 1.6 as const, margin: 0 }
+
 export default async function ConfirmPage({
   params,
   searchParams,
@@ -24,9 +28,9 @@ export default async function ConfirmPage({
   if (decline === 'true') {
     const result = await declineOffer(supabase, token)
     return (
-      <main>
-        <h1>{result.ok ? 'Slot declined' : 'Unable to process'}</h1>
-        <p>
+      <main style={pageStyle}>
+        <h1 style={headingStyle}>{result.ok ? 'Slot declined' : 'Unable to process'}</h1>
+        <p style={textStyle}>
           {result.ok
             ? "Thanks for letting us know — we'll offer it to the next person on the list."
             : REASON_MESSAGES[result.reason]}
@@ -38,9 +42,9 @@ export default async function ConfirmPage({
   const result = await getOfferDetails(supabase, token)
   if (!result.ok) {
     return (
-      <main>
-        <h1>Unable to process</h1>
-        <p>{REASON_MESSAGES[result.reason]}</p>
+      <main style={pageStyle}>
+        <h1 style={headingStyle}>Unable to process</h1>
+        <p style={textStyle}>{REASON_MESSAGES[result.reason]}</p>
       </main>
     )
   }

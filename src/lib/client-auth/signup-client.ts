@@ -1,7 +1,7 @@
+import bcrypt from 'bcryptjs'
 import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
-import { generateToken } from '@/lib/tokens/generate-token'
-import { sendVerificationEmail } from '@/lib/notifications/email'
+import { sendSignupCodeEmail } from '@/lib/notifications/email'
 import { nameSchema, emailSchema, phoneSchema } from '@/lib/waitlist/validate-signup'
 import { passwordSchema } from '@/lib/auth/validate-password'
 import { z } from 'zod'
@@ -24,11 +24,12 @@ export async function signupClient(
     return { ok: false, error: parsed.error.issues[0]?.message ?? 'Invalid input.' }
   }
   const input = parsed.data
+  const normalizedEmail = input.email.toLowerCase()
 
   const { data: existingByEmail } = await supabase
     .from('client_profiles')
     .select('user_id')
-    .eq('email', input.email)
+    .eq('email', normalizedEmail)
     .maybeSingle()
   if (existingByEmail) return { ok: false, error: 'An account with this email already exists.' }
 
@@ -39,34 +40,30 @@ export async function signupClient(
     .maybeSingle()
   if (existingByPhone) return { ok: false, error: 'An account with this phone number already exists.' }
 
-  const { data: userData, error: authError } = await supabase.auth.admin.createUser({
-    email: input.email,
-    password: input.password,
-    email_confirm: false,
-  })
-  if (authError || !userData.user) {
+  const passwordHash = await bcrypt.hash(input.password, 12)
+  const code = String(Math.floor(100000 + Math.random() * 900000))
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString()
+
+  const { error: upsertError } = await supabase
+    .from('pending_signups')
+    .upsert(
+      {
+        account_type: 'client',
+        email: normalizedEmail,
+        password_hash: passwordHash,
+        verification_code: code,
+        expires_at: expiresAt,
+        name: input.name,
+        phone: input.phone,
+      },
+      { onConflict: 'email,account_type' }
+    )
+
+  if (upsertError) {
     return { ok: false, error: 'Could not create account. Please try again.' }
   }
 
-  const token = generateToken()
-
-  const { error: profileError } = await supabase.from('client_profiles').insert({
-    user_id: userData.user.id,
-    name: input.name,
-    email: input.email,
-    phone: input.phone,
-    email_verification_token: token,
-  })
-  if (profileError) {
-    await supabase.auth.admin.deleteUser(userData.user.id)
-    return { ok: false, error: 'Could not create profile. Please try again.' }
-  }
-
-  await sendVerificationEmail(input.email, {
-    businessName: 'your account',
-    verifyUrl: `${process.env.NEXT_PUBLIC_APP_URL}/client/verify-email/${token}`,
-    expiryHours: 48,
-  })
+  await sendSignupCodeEmail(normalizedEmail, { code })
 
   return { ok: true }
 }

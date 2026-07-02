@@ -1,115 +1,136 @@
 import Link from 'next/link'
+import MarketingLayout from '@/components/marketing-layout'
 
-export default function Home() {
+const features = [
+  {
+    title: 'Google Calendar sync',
+    desc: 'Connect your existing calendar in one click. SlotFill watches for cancellations so you never have to.',
+  },
+  {
+    title: 'Instant waitlist offers',
+    desc: 'The moment a slot opens, the next eligible client on your waitlist gets a time-limited offer automatically.',
+  },
+  {
+    title: 'Zero manual follow-up',
+    desc: 'Confirmations, declines, and rebooking all happen without you lifting a finger.',
+  },
+]
+
+export default function HomePage() {
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundColor: '#0f172a',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '2rem',
-      fontFamily: 'var(--font-geist-sans)',
-    }}>
-      <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-        <h1 style={{
-          color: '#f8fafc',
-          fontSize: '2.5rem',
-          fontWeight: 800,
-          letterSpacing: '-0.03em',
-          margin: 0,
+    <MarketingLayout>
+      {/* Hero */}
+      <section style={{
+        maxWidth: '900px', margin: '0 auto',
+        padding: '6rem 2.5rem 5rem',
+        textAlign: 'center',
+      }}>
+        <div style={{
+          display: 'inline-block',
+          backgroundColor: 'rgba(59,130,246,0.12)',
+          border: '1px solid rgba(59,130,246,0.25)',
+          borderRadius: '100px',
+          padding: '0.3rem 0.9rem',
+          fontSize: '0.78rem',
+          fontWeight: 600,
+          color: '#93c5fd',
+          letterSpacing: '0.04em',
+          marginBottom: '1.5rem',
         }}>
-          SlotFill
+          Now in early access
+        </div>
+        <h1 style={{
+          fontSize: 'clamp(2.25rem, 5vw, 3.5rem)',
+          fontWeight: 800,
+          color: '#f8fafc',
+          lineHeight: 1.1,
+          letterSpacing: '-0.03em',
+          margin: '0 0 1.25rem',
+        }}>
+          Fill every cancellation.<br />Automatically.
         </h1>
         <p style={{
-          color: '#64748b',
-          fontSize: '1rem',
-          marginTop: '0.75rem',
-          maxWidth: '360px',
-          lineHeight: 1.6,
+          color: '#94a3b8',
+          fontSize: '1.1rem',
+          lineHeight: 1.65,
+          maxWidth: '540px',
+          margin: '0 auto 2.5rem',
         }}>
-          Automatically fill cancelled appointment slots from your waitlist — no manual follow-up needed.
+          SlotFill connects to your Google Calendar and manages your waitlist for you — notifying the right client the moment a spot opens up.
         </p>
-      </div>
+        <div style={{ display: 'flex', gap: '0.875rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <Link href="/signup" style={{
+            padding: '0.75rem 1.75rem',
+            backgroundColor: '#3b82f6', color: '#fff',
+            borderRadius: '8px', textDecoration: 'none',
+            fontWeight: 600, fontSize: '0.9rem',
+          }}>
+            Get started free
+          </Link>
+          <Link href="/pricing" style={{
+            padding: '0.75rem 1.75rem',
+            backgroundColor: 'transparent', color: '#cbd5e1',
+            border: '1px solid rgba(255,255,255,0.14)',
+            borderRadius: '8px', textDecoration: 'none',
+            fontWeight: 500, fontSize: '0.9rem',
+          }}>
+            See pricing
+          </Link>
+        </div>
+      </section>
 
-      <div style={{ display: 'flex', gap: '1.5rem', flexWrap: 'wrap', justifyContent: 'center' }}>
+      {/* Features */}
+      <section style={{
+        maxWidth: '1100px', margin: '0 auto',
+        padding: '0 2.5rem 6rem',
+        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: '1.25rem',
+      }}>
+        {features.map(f => (
+          <div key={f.title} style={{
+            backgroundColor: '#1e293b',
+            border: '1px solid rgba(255,255,255,0.07)',
+            borderRadius: '12px',
+            padding: '1.75rem',
+          }}>
+            <h3 style={{ color: '#f8fafc', fontWeight: 600, fontSize: '1rem', margin: '0 0 0.625rem' }}>
+              {f.title}
+            </h3>
+            <p style={{ color: '#64748b', fontSize: '0.875rem', lineHeight: 1.65, margin: 0 }}>
+              {f.desc}
+            </p>
+          </div>
+        ))}
+      </section>
+
+      {/* CTA banner */}
+      <section style={{
+        maxWidth: '1100px', margin: '0 auto',
+        padding: '0 2.5rem 6rem',
+      }}>
         <div style={{
           backgroundColor: '#1e293b',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '12px',
-          padding: '2rem',
-          width: '260px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.75rem',
+          border: '1px solid rgba(59,130,246,0.2)',
+          borderRadius: '14px',
+          padding: '3rem 2.5rem',
+          textAlign: 'center',
         }}>
-          <div style={{ color: '#94a3b8', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            Business owner
-          </div>
-          <h2 style={{ color: '#f8fafc', fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>
-            Manage your waitlist
+          <h2 style={{ color: '#f8fafc', fontSize: '1.6rem', fontWeight: 700, margin: '0 0 0.75rem', letterSpacing: '-0.02em' }}>
+            Ready to stop leaving slots empty?
           </h2>
-          <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
-            Connect your Google Calendar, configure your waitlist, and let SlotFill handle cancellations automatically.
+          <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: '0 0 1.75rem' }}>
+            Set up takes under 5 minutes. No credit card required.
           </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
-            <Link href="/login" style={{
-              display: 'block', textAlign: 'center', padding: '0.625rem',
-              backgroundColor: '#3b82f6', color: '#fff', borderRadius: '7px',
-              textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600,
-            }}>
-              Log in
-            </Link>
-            <Link href="/signup" style={{
-              display: 'block', textAlign: 'center', padding: '0.625rem',
-              backgroundColor: 'transparent', color: '#94a3b8',
-              border: '1px solid rgba(255,255,255,0.1)', borderRadius: '7px',
-              textDecoration: 'none', fontSize: '0.875rem',
-            }}>
-              Create account
-            </Link>
-          </div>
+          <Link href="/signup" style={{
+            padding: '0.75rem 2rem',
+            backgroundColor: '#3b82f6', color: '#fff',
+            borderRadius: '8px', textDecoration: 'none',
+            fontWeight: 600, fontSize: '0.9rem',
+          }}>
+            Create your business account
+          </Link>
         </div>
-
-        <div style={{
-          backgroundColor: '#1e293b',
-          border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '12px',
-          padding: '2rem',
-          width: '260px',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '0.75rem',
-        }}>
-          <div style={{ color: '#94a3b8', fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-            Client
-          </div>
-          <h2 style={{ color: '#f8fafc', fontSize: '1.1rem', fontWeight: 600, margin: 0 }}>
-            Join a waitlist
-          </h2>
-          <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0, lineHeight: 1.5 }}>
-            Get notified the moment a cancellation opens up at a business you already visit.
-          </p>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginTop: '0.5rem' }}>
-            <Link href="/client/login" style={{
-              display: 'block', textAlign: 'center', padding: '0.625rem',
-              backgroundColor: '#0ea5e9', color: '#fff', borderRadius: '7px',
-              textDecoration: 'none', fontSize: '0.875rem', fontWeight: 600,
-            }}>
-              Log in
-            </Link>
-            <Link href="/client/signup" style={{
-              display: 'block', textAlign: 'center', padding: '0.625rem',
-              backgroundColor: 'transparent', color: '#94a3b8',
-              border: '1px solid rgba(255,255,255,0.1)', borderRadius: '7px',
-              textDecoration: 'none', fontSize: '0.875rem',
-            }}>
-              Create account
-            </Link>
-          </div>
-        </div>
-      </div>
-    </div>
+      </section>
+    </MarketingLayout>
   )
 }

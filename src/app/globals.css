@@ -1,17 +1,22 @@
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg: #0f172a;
+  --surface: #1e293b;
+  --border: rgba(255, 255, 255, 0.08);
+  --input-border: rgba(255, 255, 255, 0.12);
+  --text-primary: #f8fafc;
+  --text-label: #cbd5e1;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --accent: #3b82f6;
+  --accent-sky: #0ea5e9;
+  --error-bg: rgba(239, 68, 68, 0.1);
+  --error-border: rgba(239, 68, 68, 0.25);
+  --error-text: #fca5a5;
 }
 
 html {
   height: 100%;
+  color-scheme: dark;
 }
 
 html,
@@ -24,8 +29,8 @@ body {
   min-height: 100%;
   display: flex;
   flex-direction: column;
-  color: var(--foreground);
-  background: var(--background);
+  background-color: var(--bg);
+  color: var(--text-primary);
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -42,8 +47,66 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+/* ── Dark form elements ── */
+
+input,
+textarea,
+select {
+  background-color: var(--bg);
+  color: var(--text-primary);
+  border: 1px solid var(--input-border);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.28);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+}
+
+/* Stop browser autofill from flashing the field white */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 1000px #0f172a inset !important;
+  -webkit-text-fill-color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.12) !important;
+  caret-color: #f8fafc;
+}
+
+button {
+  font-family: inherit;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  color: var(--text-primary);
+}
+
+fieldset {
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+legend {
+  color: var(--text-label);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0 0.25rem;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
 }

@@ -1,6 +1,10 @@
+import { randomUUID } from 'crypto'
 import { NextResponse } from 'next/server'
-import { createServiceRoleClient, createServerSupabaseClient } from '@/lib/db/supabase'
+import bcrypt from 'bcryptjs'
+import { createServiceRoleClient } from '@/lib/db/supabase'
 import { emailSchema, phoneSchema } from '@/lib/waitlist/validate-signup'
+
+const SESSION_DAYS = 30
 
 export async function POST(req: Request) {
   const body = await req.json().catch(() => null)
@@ -19,44 +23,60 @@ export async function POST(req: Request) {
     email = identifier
   } else if (isPhone) {
     const normalizedPhone = identifier.replace(/^\+/, '')
-    const { data: profile } = await serviceSupabase
+    const { data: byPhone } = await serviceSupabase
       .from('client_profiles')
       .select('email')
       .eq('phone', normalizedPhone)
       .maybeSingle()
-    if (!profile) return NextResponse.json({ error: 'No account found.' }, { status: 400 })
-    email = profile.email
+    if (!byPhone) return NextResponse.json({ error: 'No account found.' }, { status: 400 })
+    email = byPhone.email
   } else {
-    // Name fallback: case-insensitive exact match
-    const { data: profiles } = await serviceSupabase
+    const { data: byName } = await serviceSupabase
       .from('client_profiles')
       .select('email')
       .ilike('name', identifier)
-    if (!profiles || profiles.length === 0) {
+    if (!byName || byName.length === 0) {
       return NextResponse.json({ error: 'No account found.' }, { status: 400 })
     }
-    if (profiles.length > 1) {
+    if (byName.length > 1) {
       return NextResponse.json(
         { error: 'Multiple accounts found with that name. Please use email or phone.' },
         { status: 400 }
       )
     }
-    email = profiles[0].email
+    email = byName[0].email
   }
 
   const { data: profile } = await serviceSupabase
     .from('client_profiles')
-    .select('verified_at')
+    .select('user_id, password_hash')
     .eq('email', email)
     .maybeSingle()
-  if (!profile) return NextResponse.json({ error: 'No account found.' }, { status: 400 })
-  if (!profile.verified_at) {
-    return NextResponse.json({ error: 'Please verify your email before logging in.' }, { status: 400 })
+
+  if (!profile || !profile.password_hash) {
+    return NextResponse.json({ error: 'No account found.' }, { status: 400 })
   }
 
-  const supabase = await createServerSupabaseClient()
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
-  if (error) return NextResponse.json({ error: 'Incorrect email/phone or password.' }, { status: 400 })
+  const match = await bcrypt.compare(password, profile.password_hash)
+  if (!match) {
+    return NextResponse.json({ error: 'Incorrect email/phone or password.' }, { status: 400 })
+  }
 
-  return NextResponse.json({ ok: true })
+  const sessionToken = randomUUID()
+  const sessionExpiresAt = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000).toISOString()
+
+  await serviceSupabase
+    .from('client_profiles')
+    .update({ session_token: sessionToken, session_expires_at: sessionExpiresAt })
+    .eq('user_id', profile.user_id)
+
+  const response = NextResponse.json({ ok: true })
+  response.cookies.set('sf_client_session', sessionToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    path: '/',
+    maxAge: SESSION_DAYS * 24 * 60 * 60,
+  })
+  return response
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import bcrypt from 'bcryptjs'
 import { createServiceRoleClient } from '@/lib/db/supabase'
 import { passwordSchema } from '@/lib/auth/validate-password'
 import { sendPasswordChangedEmail } from '@/lib/notifications/email'
@@ -66,10 +67,11 @@ export async function POST(req: Request) {
     .update({ password_reset_token: null, password_reset_expires_at: null, password_reset_session: null, password_reset_attempts: 0 })
     .eq('user_id', profile.user_id)
 
-  const { error: updateError } = await serviceSupabase.auth.admin.updateUserById(
-    profile.user_id,
-    { password: newPassword }
-  )
+  const passwordHash = await bcrypt.hash(newPassword, 12)
+  const { error: updateError } = await serviceSupabase
+    .from('client_profiles')
+    .update({ password_hash: passwordHash })
+    .eq('user_id', profile.user_id)
   if (updateError) {
     return NextResponse.json({ error: 'Could not update password. Please try again.' }, { status: 500 })
   }

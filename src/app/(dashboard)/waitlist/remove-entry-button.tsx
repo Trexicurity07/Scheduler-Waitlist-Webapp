@@ -21,9 +21,9 @@ export function RemoveEntryButton({ entryId }: { entryId: string }) {
       style={{
         padding: '0.3rem 0.7rem',
         backgroundColor: 'transparent',
-        border: '1px solid #fca5a5',
+        border: '1px solid rgba(239,68,68,0.3)',
         borderRadius: '5px',
-        color: pending ? '#94a3b8' : '#dc2626',
+        color: pending ? '#64748b' : '#f87171',
         fontSize: '0.75rem',
         fontWeight: 500,
         cursor: pending ? 'default' : 'pointer',

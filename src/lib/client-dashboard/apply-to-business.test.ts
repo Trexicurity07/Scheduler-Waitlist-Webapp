@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { describe, it, expect, afterEach } from 'vitest'
 import { createServiceRoleClient } from '@/lib/db/supabase'
 import { createTestBusiness, cleanupTestBusiness, createTestClientAndEntry, cleanupTestClient } from '@/lib/cron/test-helpers'
@@ -24,10 +25,12 @@ describe('applyToBusiness (integration)', () => {
     const slug = (await supabase.from('businesses').select('public_slug').eq('id', businessId).single()).data!.public_slug
 
     const clientEmail = `apply-test-${Date.now()}@example.com`
-    const { data: userData } = await supabase.auth.admin.createUser({ email: clientEmail, password: 'SecurePass1', email_confirm: true })
-    const clientUserId = userData!.user!.id
+    const clientUserId = randomUUID()
     clientCleanups.push(clientUserId)
-    await supabase.from('client_profiles').insert({ user_id: clientUserId, name: 'Applicant', email: clientEmail, phone: `1555${Math.floor(1000000 + Math.random() * 8999999)}`, verified_at: new Date().toISOString() })
+    await supabase.from('client_profiles').insert({
+      user_id: clientUserId, name: 'Applicant', email: clientEmail,
+      phone: `1555${Math.floor(1000000 + Math.random() * 8999999)}`,
+    })
 
     const result = await applyToBusiness(supabase, clientUserId, slug, [{ days: [1, 2, 3, 4, 5], start: '09:00', end: '17:00' }])
     expect(result.ok).toBe(true)
@@ -54,10 +57,12 @@ describe('applyToBusiness (integration)', () => {
   it('returns error when business slug is not found', async () => {
     const supabase = createServiceRoleClient()
     const clientEmail = `apply-notfound-${Date.now()}@example.com`
-    const { data: userData } = await supabase.auth.admin.createUser({ email: clientEmail, password: 'SecurePass1', email_confirm: true })
-    const clientUserId = userData!.user!.id
+    const clientUserId = randomUUID()
     clientCleanups.push(clientUserId)
-    await supabase.from('client_profiles').insert({ user_id: clientUserId, name: 'Ghost', email: clientEmail, phone: `1555${Math.floor(1000000 + Math.random() * 8999999)}`, verified_at: new Date().toISOString() })
+    await supabase.from('client_profiles').insert({
+      user_id: clientUserId, name: 'Ghost', email: clientEmail,
+      phone: `1555${Math.floor(1000000 + Math.random() * 8999999)}`,
+    })
 
     const result = await applyToBusiness(supabase, clientUserId, 'no-such-slug-xyz', [{ days: [1], start: '09:00', end: '17:00' }])
     expect(result.ok).toBe(false)

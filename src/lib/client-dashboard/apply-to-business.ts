@@ -50,7 +50,9 @@ export async function applyToBusiness(
     clientId = newClient.id
   }
 
-  const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+  const expiryDate = new Date()
+  expiryDate.setMonth(expiryDate.getMonth() + 1)
+  const expiresAt = expiryDate.toISOString()
 
   const { error: entryError } = await supabase.from('waitlist_entries').insert({
     business_id: businessId,

@@ -2,7 +2,6 @@
 
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
-import { createBrowserSupabaseClient } from '@/lib/db/supabase-browser'
 
 const NAV_LINKS = [
   { href: '/dashboard', label: 'Dashboard' },
@@ -11,64 +10,66 @@ const NAV_LINKS = [
 ]
 
 const styles = {
-  sidebar: {
-    width: '220px',
-    minHeight: '100vh',
+  header: {
     backgroundColor: '#0f172a',
+    borderBottom: '1px solid rgba(255,255,255,0.08)',
     display: 'flex',
-    flexDirection: 'column' as const,
-    flexShrink: 0,
+    alignItems: 'center',
+    padding: '0 1.5rem',
+    height: '56px',
+    gap: '2rem',
     position: 'sticky' as const,
     top: 0,
-    height: '100vh',
+    zIndex: 100,
+    flexShrink: 0,
   },
   brand: {
-    padding: '1.5rem 1.25rem',
-    borderBottom: '1px solid rgba(255,255,255,0.08)',
-  },
-  brandName: {
     color: '#f8fafc',
     fontWeight: 700,
-    fontSize: '1.1rem',
-    letterSpacing: '-0.01em',
+    fontSize: '1rem',
     textDecoration: 'none',
+    letterSpacing: '-0.01em',
+    whiteSpace: 'nowrap' as const,
   },
   brandSub: {
     color: '#64748b',
-    fontSize: '0.7rem',
-    textTransform: 'uppercase' as const,
-    letterSpacing: '0.08em',
-    marginTop: '2px',
+    fontSize: '0.75rem',
+    whiteSpace: 'nowrap' as const,
+  },
+  divider: {
+    width: '1px',
+    height: '20px',
+    backgroundColor: 'rgba(255,255,255,0.1)',
+    flexShrink: 0,
   },
   nav: {
-    padding: '1rem 0',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.25rem',
     flex: 1,
   },
   link: (active: boolean): React.CSSProperties => ({
-    display: 'block',
-    padding: '0.625rem 1.25rem',
+    padding: '0.375rem 0.75rem',
+    borderRadius: '6px',
     color: active ? '#f8fafc' : '#94a3b8',
     textDecoration: 'none',
     fontSize: '0.875rem',
     fontWeight: active ? 600 : 400,
-    borderLeft: active ? '3px solid #3b82f6' : '3px solid transparent',
-    backgroundColor: active ? 'rgba(59,130,246,0.1)' : 'transparent',
-    transition: 'color 0.15s, background-color 0.15s',
+    backgroundColor: active ? 'rgba(59,130,246,0.15)' : 'transparent',
   }),
-  footer: {
-    padding: '1rem 1.25rem',
-    borderTop: '1px solid rgba(255,255,255,0.08)',
+  actions: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: 'auto',
   },
   logoutBtn: {
-    width: '100%',
-    padding: '0.5rem 0.75rem',
+    padding: '0.375rem 0.875rem',
     backgroundColor: 'transparent',
-    border: '1px solid rgba(255,255,255,0.12)',
+    border: '1px solid rgba(255,255,255,0.15)',
     borderRadius: '6px',
     color: '#94a3b8',
     fontSize: '0.8rem',
     cursor: 'pointer',
-    textAlign: 'left' as const,
   },
 }
 
@@ -77,18 +78,15 @@ export default function OwnerNav() {
   const router = useRouter()
 
   async function handleLogout() {
-    const supabase = createBrowserSupabaseClient()
-    await supabase.auth.signOut()
+    await fetch('/api/owner/logout', { method: 'POST' })
     router.push('/login')
   }
 
   return (
-    <aside style={styles.sidebar}>
-      <div style={styles.brand}>
-        <Link href="/dashboard" style={styles.brandName}>SlotFill</Link>
-        <div style={styles.brandSub}>Business portal</div>
-      </div>
-
+    <header style={styles.header}>
+      <Link href="/dashboard" style={styles.brand}>SlotFill</Link>
+      <span style={styles.brandSub}>Business</span>
+      <div style={styles.divider} />
       <nav style={styles.nav}>
         {NAV_LINKS.map(({ href, label }) => {
           const active = pathname === href || pathname.startsWith(href + '/')
@@ -99,12 +97,11 @@ export default function OwnerNav() {
           )
         })}
       </nav>
-
-      <div style={styles.footer}>
+      <div style={styles.actions}>
         <button style={styles.logoutBtn} onClick={handleLogout}>
           Sign out
         </button>
       </div>
-    </aside>
+    </header>
   )
 }

@@ -66,10 +66,12 @@ export async function POST(req: Request) {
     .update({ password_reset_token: null, password_reset_expires_at: null, password_reset_session: null, password_reset_attempts: 0 })
     .eq('auth_user_id', profile.auth_user_id)
 
-  const { error: updateError } = await serviceSupabase.auth.admin.updateUserById(
-    profile.auth_user_id,
-    { password: newPassword }
-  )
+  const bcrypt = await import('bcryptjs')
+  const passwordHash = await bcrypt.hash(newPassword, 12)
+  const { error: updateError } = await serviceSupabase
+    .from('owner_profiles')
+    .update({ password_hash: passwordHash })
+    .eq('auth_user_id', profile.auth_user_id)
   if (updateError) {
     return NextResponse.json({ error: 'Could not update password. Please try again.' }, { status: 500 })
   }

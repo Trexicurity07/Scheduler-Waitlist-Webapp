@@ -1,6 +1,7 @@
-import type { SupabaseClient } from '@supabase/supabase-js'
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import { createServerSupabaseClient } from '@/lib/db/supabase'
+import { createServiceRoleClient } from '@/lib/db/supabase'
+import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
 
 export type ClientProfile = {
@@ -8,27 +9,26 @@ export type ClientProfile = {
   name: string
   email: string
   phone: string
-  verified_at: string
 }
 
 export async function getCurrentClient(): Promise<{
   supabase: SupabaseClient<Database>
   profile: ClientProfile
 }> {
-  const supabase = await createServerSupabaseClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const cookieStore = await cookies()
+  const sessionToken = cookieStore.get('sf_client_session')?.value
 
-  if (!user) redirect('/client/login')
+  if (!sessionToken) redirect('/client/login')
 
+  const supabase = createServiceRoleClient()
   const { data: profile } = await supabase
     .from('client_profiles')
-    .select('user_id, name, email, phone, verified_at')
-    .eq('user_id', user.id)
-    .single()
+    .select('user_id, name, email, phone')
+    .eq('session_token', sessionToken)
+    .gt('session_expires_at', new Date().toISOString())
+    .maybeSingle()
 
-  if (!profile || !profile.verified_at) redirect('/client/login')
+  if (!profile) redirect('/client/login')
 
   return { supabase, profile: profile as ClientProfile }
 }

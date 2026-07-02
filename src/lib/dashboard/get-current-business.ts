@@ -1,27 +1,37 @@
+import { cookies } from 'next/headers'
 import { redirect } from 'next/navigation'
-import type { SupabaseClient } from '@supabase/supabase-js'
 import type { Database } from '@/types/database'
-import { createServerSupabaseClient } from '@/lib/db/supabase'
+import { createServiceRoleClient } from '@/lib/db/supabase'
+
+type SupabaseServiceClient = ReturnType<typeof createServiceRoleClient>
+type OwnerProfile = Database['public']['Tables']['owner_profiles']['Row']
+type Business = Database['public']['Tables']['businesses']['Row']
 
 export async function getCurrentBusiness(): Promise<{
-  supabase: SupabaseClient<Database>
-  business: Database['public']['Tables']['businesses']['Row']
+  supabase: SupabaseServiceClient
+  owner: OwnerProfile
+  business: Business | null
 }> {
-  const supabase = await createServerSupabaseClient()
-  const { data: userData, error: userError } = await supabase.auth.getUser()
-  if (userError || !userData.user) {
-    redirect('/login')
-  }
+  const cookieStore = await cookies()
+  const sessionToken = cookieStore.get('sf_owner_session')?.value
+  if (!sessionToken) redirect('/login')
+
+  const supabase = createServiceRoleClient()
+
+  const { data: owner } = await supabase
+    .from('owner_profiles')
+    .select('*')
+    .eq('session_token', sessionToken)
+    .gt('session_expires_at', new Date().toISOString())
+    .maybeSingle()
+
+  if (!owner) redirect('/login')
 
   const { data: business } = await supabase
     .from('businesses')
     .select('*')
-    .eq('owner_user_id', userData.user.id)
-    .single()
+    .eq('owner_user_id', owner.auth_user_id)
+    .maybeSingle()
 
-  if (!business) {
-    redirect('/connect')
-  }
-
-  return { supabase, business }
+  return { supabase, owner, business: business ?? null }
 }

@@ -3,23 +3,13 @@
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import { FieldError } from '@/components/field-error'
+import { inputStyle, labelStyle, pageWrapperStyle, h1Style, subtitleStyle, showPasswordBtnStyle } from '@/lib/ui/theme'
 
-const inputStyle = {
-  padding: '0.625rem 0.75rem',
-  borderRadius: '6px',
-  border: '1px solid #cbd5e1',
-  fontSize: '0.875rem',
-  width: '100%',
-  boxSizing: 'border-box' as const,
-}
-
-const labelStyle = {
-  display: 'flex' as const,
-  flexDirection: 'column' as const,
-  gap: '0.375rem',
-  fontSize: '0.875rem',
-  fontWeight: 500 as const,
-  color: '#0f172a',
+function detectField(msg: string): 'identifier' | 'password' {
+  const m = msg.toLowerCase()
+  if (m.includes('account') || m.includes('multiple') || m.includes('verify')) return 'identifier'
+  return 'password'
 }
 
 export default function ClientLoginPage() {
@@ -27,6 +17,7 @@ export default function ClientLoginPage() {
   const searchParams = useSearchParams()
   const [form, setForm] = useState({ identifier: '', password: '' })
   const [error, setError] = useState<string | null>(null)
+  const [errorField, setErrorField] = useState<'identifier' | 'password'>('password')
   const [loading, setLoading] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
 
@@ -42,7 +33,9 @@ export default function ClientLoginPage() {
     const data: unknown = await res.json()
     setLoading(false)
     if (!res.ok) {
-      setError((data as { error?: string }).error ?? 'Login failed.')
+      const msg = (data as { error?: string }).error ?? 'Login failed.'
+      setError(msg)
+      setErrorField(detectField(msg))
       return
     }
     const next = searchParams.get('next') ?? '/client/dashboard'
@@ -50,66 +43,53 @@ export default function ClientLoginPage() {
   }
 
   return (
-    <main style={{ maxWidth: '400px', margin: '6rem auto', padding: '0 1.5rem' }}>
+    <main style={pageWrapperStyle}>
       <div style={{ marginBottom: '2rem' }}>
-        <Link href="/" style={{ color: '#64748b', fontSize: '0.8rem', textDecoration: 'none' }}>
-          ← Home
-        </Link>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#0f172a', margin: '0.75rem 0 0.25rem' }}>
-          Client login
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '0.875rem', margin: 0 }}>
-          Sign in to view your waitlists and slot offers.
-        </p>
+        <Link href="/" style={{ color: '#64748b', fontSize: '0.8rem' }}>← Home</Link>
+        <h1 style={h1Style}>Client login</h1>
+        <p style={subtitleStyle}>Sign in to view your waitlists and slot offers.</p>
       </div>
 
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <label style={labelStyle}>
-          Email, phone, or name
-          <input
-            type="text"
-            value={form.identifier}
-            onChange={(e) => setForm({ ...form, identifier: e.target.value })}
-            required
-            autoComplete="username"
-            placeholder="Email, phone, or your name"
-            maxLength={254}
-            style={inputStyle}
-          />
-        </label>
-        <label style={labelStyle}>
-          Password
-          <div style={{ position: 'relative' }}>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={labelStyle}>
+            Email, phone, or name
             <input
-              type={showPassword ? 'text' : 'password'}
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
+              type="text"
+              value={form.identifier}
+              onChange={(e) => setForm({ ...form, identifier: e.target.value })}
               required
-              autoComplete="current-password"
-              style={{ ...inputStyle, paddingRight: '4rem' }}
+              autoComplete="username"
+              placeholder="Email, phone, or your name"
+              maxLength={254}
+              style={inputStyle}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              style={{
-                position: 'absolute', right: '0.625rem', top: '50%', transform: 'translateY(-50%)',
-                background: 'none', border: 'none', color: '#64748b', fontSize: '0.75rem',
-                cursor: 'pointer', padding: '0.25rem',
-              }}
-            >
-              {showPassword ? 'Hide' : 'Show'}
-            </button>
-          </div>
-        </label>
+          </label>
+          {error && errorField === 'identifier' && <FieldError message={error} />}
+        </div>
 
-        {error && (
-          <p role="alert" style={{ color: '#dc2626', fontSize: '0.875rem', margin: 0 }}>{error}</p>
-        )}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <label style={labelStyle}>
+            Password
+            <div style={{ position: 'relative' }}>
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                required
+                autoComplete="current-password"
+                style={{ ...inputStyle, paddingRight: '4rem' }}
+              />
+              <button type="button" onClick={() => setShowPassword((v) => !v)} style={showPasswordBtnStyle}>
+                {showPassword ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          </label>
+          {error && errorField === 'password' && <FieldError message={error} />}
+        </div>
 
         <div style={{ textAlign: 'right', marginTop: '-0.25rem' }}>
-          <Link href="/client/forgot-password" style={{ color: '#64748b', fontSize: '0.8rem', textDecoration: 'none' }}>
-            Forgot password?
-          </Link>
+          <Link href="/client/forgot-password" style={{ color: '#64748b', fontSize: '0.8rem' }}>Forgot password?</Link>
         </div>
 
         <button
@@ -118,12 +98,8 @@ export default function ClientLoginPage() {
           style={{
             padding: '0.675rem',
             backgroundColor: loading ? '#7dd3fc' : '#0ea5e9',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '7px',
-            fontWeight: 600,
-            fontSize: '0.875rem',
-            cursor: loading ? 'default' : 'pointer',
+            color: '#fff', border: 'none', borderRadius: '7px',
+            fontWeight: 600, fontSize: '0.875rem', cursor: loading ? 'default' : 'pointer',
           }}
         >
           {loading ? 'Signing in…' : 'Log in'}
@@ -132,7 +108,7 @@ export default function ClientLoginPage() {
 
       <p style={{ marginTop: '1.25rem', fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>
         No account?{' '}
-        <Link href="/client/signup" style={{ color: '#0ea5e9', textDecoration: 'none' }}>Sign up</Link>
+        <Link href="/client/signup" style={{ color: '#0ea5e9' }}>Sign up</Link>
       </p>
     </main>
   )

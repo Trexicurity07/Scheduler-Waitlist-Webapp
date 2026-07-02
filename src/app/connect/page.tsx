@@ -18,16 +18,16 @@ export default async function ConnectPage({
       <h1 style={{ fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.5rem' }}>
         Connect Google Calendar
       </h1>
-      <p style={{ color: '#64748b', marginBottom: '2rem', lineHeight: 1.6 }}>
+      <p style={{ color: '#94a3b8', marginBottom: '2rem', lineHeight: 1.6 }}>
         SlotFill monitors your dedicated bookings calendar for cancellations and automatically
         notifies your waitlist.
       </p>
 
       {errorMessage && (
         <p role="alert" style={{
-          backgroundColor: '#fef2f2',
-          border: '1px solid #fecaca',
-          color: '#dc2626',
+          backgroundColor: 'rgba(239,68,68,0.1)',
+          border: '1px solid rgba(239,68,68,0.25)',
+          color: '#fca5a5',
           borderRadius: '8px',
           padding: '0.875rem 1rem',
           marginBottom: '1.5rem',

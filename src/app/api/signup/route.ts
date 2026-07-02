@@ -1,7 +1,9 @@
+import bcrypt from 'bcryptjs'
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/db/supabase'
+import { createServiceRoleClient } from '@/lib/db/supabase'
 import { passwordSchema } from '@/lib/auth/validate-password'
+import { sendSignupCodeEmail } from '@/lib/notifications/email'
 
 const requestSchema = z.object({
   email: z.string().trim().email().max(254, 'Email address is too long'),
@@ -11,6 +13,7 @@ const requestSchema = z.object({
     .trim()
     .min(1, 'Business name is required')
     .max(80, 'Business name must be at most 80 characters'),
+  plan: z.enum(['starter', 'pro', 'max']).default('starter'),
 })
 
 export async function POST(request: Request): Promise<NextResponse> {
@@ -27,37 +30,52 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: false, error: message }, { status: 400 })
   }
 
-  const { email, password, businessName } = parsed.data
-
+  const { email, password, businessName, plan } = parsed.data
+  const normalizedEmail = email.toLowerCase()
   const serviceSupabase = createServiceRoleClient()
-  const { data: existing } = await serviceSupabase
+
+  const { data: existingName } = await serviceSupabase
     .from('owner_profiles')
     .select('auth_user_id')
     .ilike('business_name', businessName)
     .maybeSingle()
-  if (existing) {
+  if (existingName) {
     return NextResponse.json({ ok: false, error: 'Name taken' }, { status: 409 })
   }
 
-  const supabase = await createServerSupabaseClient()
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
-  const { data: signUpData, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: { emailRedirectTo: `${appUrl}/auth/confirm` },
-  })
-  if (error) {
-    return NextResponse.json({ ok: false, error: error.message }, { status: 400 })
+  const { data: existingEmail } = await serviceSupabase
+    .from('owner_profiles')
+    .select('auth_user_id')
+    .eq('email', normalizedEmail)
+    .maybeSingle()
+  if (existingEmail) {
+    return NextResponse.json({ ok: false, error: 'An account with this email already exists.' }, { status: 409 })
   }
 
-  const userId = signUpData.user?.id
-  if (userId) {
-    await serviceSupabase.from('owner_profiles').insert({
-      auth_user_id: userId,
-      business_name: businessName,
-      email,
-    })
+  const passwordHash = await bcrypt.hash(password, 12)
+  const code = String(Math.floor(100000 + Math.random() * 900000))
+  const expiresAt = new Date(Date.now() + 15 * 60 * 1000).toISOString()
+
+  const { error: upsertError } = await serviceSupabase
+    .from('pending_signups')
+    .upsert(
+      {
+        account_type: 'owner',
+        email: normalizedEmail,
+        password_hash: passwordHash,
+        verification_code: code,
+        expires_at: expiresAt,
+        business_name: businessName,
+        plan_tier: plan,
+      },
+      { onConflict: 'email,account_type' }
+    )
+
+  if (upsertError) {
+    return NextResponse.json({ ok: false, error: 'Could not create account. Please try again.' }, { status: 500 })
   }
+
+  await sendSignupCodeEmail(normalizedEmail, { code })
 
   return NextResponse.json({ ok: true })
 }

@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { createServiceRoleClient } from '@/lib/db/supabase'
 import { createTestBusiness, cleanupTestBusiness } from '@/lib/cron/test-helpers'
@@ -36,15 +37,16 @@ describe('manage-waitlist (integration)', () => {
     const clientCleanups: string[] = []
     afterEach(async () => {
       const supabase = createServiceRoleClient()
-      for (const id of clientCleanups.splice(0)) await supabase.auth.admin.deleteUser(id)
+      for (const id of clientCleanups.splice(0)) {
+        await supabase.from('client_profiles').delete().eq('user_id', id)
+      }
     })
 
     async function createClientAccount(supabase: ReturnType<typeof createServiceRoleClient>, email: string, phone: string) {
-      const { data: userData } = await supabase.auth.admin.createUser({ email, password: 'TestPass1', email_confirm: true })
-      const userId = userData!.user!.id
+      const userId = randomUUID()
       clientCleanups.push(userId)
       await supabase.from('client_profiles').insert({
-        user_id: userId, name: 'Test Client', email, phone, verified_at: new Date().toISOString(),
+        user_id: userId, name: 'Test Client', email, phone,
       })
       return userId
     }
@@ -54,7 +56,7 @@ describe('manage-waitlist (integration)', () => {
       const email = `manual-${Date.now()}@example.com`
       await createClientAccount(supabase, email, `1555${Math.floor(1000000 + Math.random() * 8999999)}`)
 
-      const result = await addWaitlistEntry(supabase, businessId, {
+      const result = await addWaitlistEntry(supabase, businessId, null, {
         identifier: email,
         timeWindows: [{ days: [1], start: '09:00', end: '17:00' }],
       })
@@ -74,7 +76,7 @@ describe('manage-waitlist (integration)', () => {
 
     it('returns error when no account exists for the identifier', async () => {
       const { supabase, businessId } = await setupBusiness()
-      const result = await addWaitlistEntry(supabase, businessId, {
+      const result = await addWaitlistEntry(supabase, businessId, null, {
         identifier: 'nosuchclient@example.com',
         timeWindows: [{ days: [1], start: '09:00', end: '17:00' }],
       })
@@ -87,8 +89,8 @@ describe('manage-waitlist (integration)', () => {
       const email = `dup-${Date.now()}@example.com`
       await createClientAccount(supabase, email, `1555${Math.floor(1000000 + Math.random() * 8999999)}`)
 
-      await addWaitlistEntry(supabase, businessId, { identifier: email, timeWindows: [{ days: [1], start: '09:00', end: '17:00' }] })
-      const result = await addWaitlistEntry(supabase, businessId, { identifier: email, timeWindows: [{ days: [2], start: '09:00', end: '17:00' }] })
+      await addWaitlistEntry(supabase, businessId, null, { identifier: email, timeWindows: [{ days: [1], start: '09:00', end: '17:00' }] })
+      const result = await addWaitlistEntry(supabase, businessId, null, { identifier: email, timeWindows: [{ days: [2], start: '09:00', end: '17:00' }] })
       expect(result.ok).toBe(false)
     })
   })
@@ -97,15 +99,16 @@ describe('manage-waitlist (integration)', () => {
     const clientCleanups: string[] = []
     afterEach(async () => {
       const supabase = createServiceRoleClient()
-      for (const id of clientCleanups.splice(0)) await supabase.auth.admin.deleteUser(id)
+      for (const id of clientCleanups.splice(0)) {
+        await supabase.from('client_profiles').delete().eq('user_id', id)
+      }
     })
 
     async function createClientAccount(supabase: ReturnType<typeof createServiceRoleClient>, email: string, phone: string) {
-      const { data: userData } = await supabase.auth.admin.createUser({ email, password: 'TestPass1', email_confirm: true })
-      const userId = userData!.user!.id
+      const userId = randomUUID()
       clientCleanups.push(userId)
       await supabase.from('client_profiles').insert({
-        user_id: userId, name: 'Test Client', email, phone, verified_at: new Date().toISOString(),
+        user_id: userId, name: 'Test Client', email, phone,
       })
       return userId
     }
@@ -114,7 +117,7 @@ describe('manage-waitlist (integration)', () => {
       const { supabase, businessId } = await setupBusiness()
       const email = `removable-${Date.now()}@example.com`
       await createClientAccount(supabase, email, `1555${Math.floor(1000000 + Math.random() * 8999999)}`)
-      await addWaitlistEntry(supabase, businessId, {
+      await addWaitlistEntry(supabase, businessId, null, {
         identifier: email,
         timeWindows: [{ days: [1], start: '09:00', end: '17:00' }],
       })
@@ -147,7 +150,7 @@ describe('manage-waitlist (integration)', () => {
 
       const email = `other-${Date.now()}@example.com`
       await createClientAccount(supabase, email, `1555${Math.floor(1000000 + Math.random() * 8999999)}`)
-      await addWaitlistEntry(supabase, otherBusinessId, {
+      await addWaitlistEntry(supabase, otherBusinessId, null, {
         identifier: email,
         timeWindows: [{ days: [1], start: '09:00', end: '17:00' }],
       })

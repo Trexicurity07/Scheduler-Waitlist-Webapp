@@ -37,6 +37,6 @@ export async function POST(request: Request): Promise<NextResponse> {
     return NextResponse.json({ ok: false, error: 'Business not found' }, { status: 404 })
   }
 
-  const result = await addWaitlistEntry(supabase, business.id, parsed.data)
+  const result = await addWaitlistEntry(supabase, business.id, null, parsed.data)
   return NextResponse.json(result, { status: result.ok ? 200 : 400 })
 }

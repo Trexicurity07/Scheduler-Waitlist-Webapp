@@ -23,6 +23,7 @@ function ownerWhatsAppLink(businessName: string, whatsappNumber: string): string
 export async function addWaitlistEntry(
   supabase: SupabaseClient<Database>,
   businessId: string,
+  waitlistId: string | null,
   input: AddWaitlistEntryInput
 ): Promise<{ ok: true } | { ok: false; error: string }> {
   const { data: business } = await supabase
@@ -76,9 +77,12 @@ export async function addWaitlistEntry(
     clientId = newClient.id
   }
 
-  const expiresAt = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()
+  const expiryDate = new Date()
+  expiryDate.setMonth(expiryDate.getMonth() + 1)
+  const expiresAt = expiryDate.toISOString()
   const { error: entryError } = await supabase.from('waitlist_entries').insert({
     business_id: businessId,
+    ...(waitlistId ? { waitlist_id: waitlistId } : {}),
     client_id: clientId,
     time_windows: input.timeWindows as unknown as Json,
     status: 'active',

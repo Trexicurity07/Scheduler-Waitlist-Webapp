@@ -1,12 +1,18 @@
+import { getCurrentBusiness } from '@/lib/dashboard/get-current-business'
+import { fetchLocationTree } from '@/lib/dashboard/location-tree'
+import { DashboardShell } from '@/components/dashboard-shell'
 import OwnerNav from './owner-nav'
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { supabase, business } = await getCurrentBusiness()
+  const tree = business ? await fetchLocationTree(supabase, business.id) : []
+
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: '#f1f5f9' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#0f172a' }}>
       <OwnerNav />
-      <div style={{ flex: 1, minWidth: 0, padding: '2rem', overflowY: 'auto' as const }}>
+      <DashboardShell tree={tree}>
         {children}
-      </div>
+      </DashboardShell>
     </div>
   )
 }

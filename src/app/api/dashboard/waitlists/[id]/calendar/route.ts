@@ -29,7 +29,7 @@ export async function POST(
 
   const { refreshToken, calendars } = JSON.parse(decrypt(pendingCookie)) as {
     refreshToken: string
-    calendars: { id: string; timeZone: string }[]
+    calendars: { id: string; timezone: string }[]
   }
   const chosenCalendar = calendars.find((c) => c.id === parsed.data.calendarId)
   if (!chosenCalendar) {
@@ -39,7 +39,7 @@ export async function POST(
   const result = await linkWaitlistCalendar(supabase, business.id, id, {
     refreshToken,
     calendarId: parsed.data.calendarId,
-    calendarTimezone: chosenCalendar.timeZone,
+    calendarTimezone: chosenCalendar.timezone,
   })
 
   if (!result.ok) return NextResponse.json(result, { status: 400 })

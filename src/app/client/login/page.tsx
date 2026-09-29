@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FieldError } from '@/components/field-error'
@@ -15,6 +15,14 @@ function detectField(msg: string): 'identifier' | 'password' {
 }
 
 export default function ClientLoginPage() {
+  return (
+    <Suspense>
+      <ClientLoginForm />
+    </Suspense>
+  )
+}
+
+function ClientLoginForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [form, setForm] = useState({ identifier: '', password: '' })

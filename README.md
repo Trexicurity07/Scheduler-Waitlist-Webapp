@@ -2,7 +2,7 @@
 
 A web app that automatically fills calendar cancellations from a waitlist. When a business owner's appointment is cancelled, the system detects it, finds clients whose availability overlaps the freed slot, and emails them a one-click offer. First to confirm gets it.
 
-**[Live Demo](https://your-deployment.vercel.app)**
+**[Live Demo](scheduler-waitlist-webapp.vercel.app)**
 
 > [!IMPORTANT]
 > **The live demo cannot demonstrate the core auto-fill flow end-to-end.** The slot detection and email dispatch run on a cron job — Vercel's free tier limits this to once per day, and it also requires a live Google Calendar connection. What you *can* explore is the full UI: both dashboards, the waitlist management, and the confirm/decline page. The interesting parts (interval-overlap matching, CAS confirm, encrypted OAuth tokens) are in the backend logic under `src/lib/cron/` and `src/lib/confirm/`.

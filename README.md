@@ -118,3 +118,6 @@ npm run seed:demo
 4. Run `npm run seed:demo` locally (with `.env.local` pointing at your live Supabase) to create the demo accounts
 
 The `/api/health` endpoint pings the database every 72 hours to stop Supabase free-tier projects from pausing after inactivity.
+
+> [!NOTE]
+> **Vercel Hobby limits crons to once per day.** `vercel.json` is set to run the sync at 08:00 UTC daily. For 5-minute sync in production, use a free external cron at [cron-job.org](https://cron-job.org) pointing at `https://your-domain.vercel.app/api/cron/poll` with header `Authorization: Bearer <your CRON_SECRET>`.

@@ -2,11 +2,11 @@
   "crons": [
     {
       "path": "/api/cron/poll",
-      "schedule": "*/5 * * * *"
+      "schedule": "0 8 * * *"
     },
     {
       "path": "/api/health",
-      "schedule": "0 */72 * * *"
+      "schedule": "0 9 * * *"
     }
   ]
 }

@@ -8,7 +8,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   const tree = business ? await fetchLocationTree(supabase, business.id) : []
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#0f172a' }}>
+    <div className="flex flex-col min-h-screen bg-[#0f172a]">
       <OwnerNav />
       <DashboardShell tree={tree}>
         {children}

@@ -10,9 +10,21 @@ const REASON_MESSAGES: Record<OfferFailureReason, string> = {
   gone: 'This slot is no longer available.',
 }
 
-const pageStyle = { maxWidth: '480px', margin: '6rem auto', padding: '0 1.5rem' }
-const headingStyle = { fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: '0 0 0.5rem' }
-const textStyle = { color: '#94a3b8', fontSize: '0.875rem', lineHeight: 1.6 as const, margin: 0 }
+function StatusPage({ icon, iconClass, title, message }: { icon: string; iconClass: string; title: string; message: string }) {
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+      <div className="w-full max-w-md">
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-8 text-center">
+          <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 ${iconClass}`}>
+            <span className="text-xl">{icon}</span>
+          </div>
+          <h1 className="text-xl font-semibold text-white mb-2">{title}</h1>
+          <p className="text-sm text-slate-400 leading-relaxed">{message}</p>
+        </div>
+      </div>
+    </main>
+  )
+}
 
 export default async function ConfirmPage({
   params,
@@ -28,24 +40,26 @@ export default async function ConfirmPage({
   if (decline === 'true') {
     const result = await declineOffer(supabase, token)
     return (
-      <main style={pageStyle}>
-        <h1 style={headingStyle}>{result.ok ? 'Slot declined' : 'Unable to process'}</h1>
-        <p style={textStyle}>
-          {result.ok
-            ? "Thanks for letting us know — we'll offer it to the next person on the list."
-            : REASON_MESSAGES[result.reason]}
-        </p>
-      </main>
+      <StatusPage
+        icon={result.ok ? '✓' : '✕'}
+        iconClass={result.ok ? 'bg-slate-500/10 border border-slate-500/20' : 'bg-red-500/10 border border-red-500/20'}
+        title={result.ok ? 'Slot declined' : 'Unable to process'}
+        message={result.ok
+          ? "Thanks for letting us know — we'll offer it to the next person on the list."
+          : REASON_MESSAGES[result.reason]}
+      />
     )
   }
 
   const result = await getOfferDetails(supabase, token)
   if (!result.ok) {
     return (
-      <main style={pageStyle}>
-        <h1 style={headingStyle}>Unable to process</h1>
-        <p style={textStyle}>{REASON_MESSAGES[result.reason]}</p>
-      </main>
+      <StatusPage
+        icon="✕"
+        iconClass="bg-red-500/10 border border-red-500/20"
+        title="Unable to process"
+        message={REASON_MESSAGES[result.reason]}
+      />
     )
   }
 

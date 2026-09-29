@@ -2,7 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import { FieldError } from '@/components/field-error'
-import { errorAlertStyle, inputStyle, labelStyle } from '@/lib/ui/theme'
+
+const inputStyle: React.CSSProperties = {
+  padding: '0.625rem 0.75rem', borderRadius: '6px',
+  border: '1px solid rgba(255,255,255,0.12)', fontSize: '0.875rem',
+  width: '100%', boxSizing: 'border-box', backgroundColor: '#0f172a', color: '#f8fafc',
+}
+const labelStyle: React.CSSProperties = {
+  display: 'flex', flexDirection: 'column', gap: '0.375rem',
+  fontSize: '0.875rem', fontWeight: 500, color: '#cbd5e1',
+}
+const errorAlertStyle: React.CSSProperties = {
+  backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
+  color: '#fca5a5', borderRadius: '8px', padding: '0.875rem 1rem', fontSize: '0.875rem',
+}
 
 interface CalendarEntry {
   id: string

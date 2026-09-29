@@ -3,6 +3,8 @@
 import Link from 'next/link'
 import MarketingLayout from '@/components/marketing-layout'
 import { useLocalPrice } from '@/lib/hooks/use-local-price'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const plans = [
   {
@@ -78,89 +80,69 @@ export default function PricingPage() {
 
   return (
     <MarketingLayout>
-      <section style={{ maxWidth: '600px', margin: '0 auto', padding: '5rem 2.5rem 3.5rem', textAlign: 'center' }}>
-        <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.75rem)', fontWeight: 800, color: '#f8fafc', margin: '0 0 1rem', letterSpacing: '-0.03em' }}>
+      <section className="mx-auto max-w-xl px-10 pb-14 pt-20 text-center">
+        <h1 className="mb-4 text-4xl font-extrabold tracking-tight text-white md:text-5xl" style={{ letterSpacing: '-0.03em' }}>
           Simple, honest pricing
         </h1>
-        <p style={{ color: '#94a3b8', fontSize: '1.05rem', lineHeight: 1.65, margin: 0 }}>
+        <p className="text-lg leading-relaxed text-slate-400">
           Start free. Upgrade when your waitlist grows. No hidden fees, no per-seat charges.
         </p>
       </section>
 
-      <section style={{
-        maxWidth: '1100px', margin: '0 auto',
-        padding: '0 2.5rem 6rem',
-        display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)',
-        gap: '1rem', alignItems: 'stretch',
-      }}>
-        {plans.map(plan => (
-          <div key={plan.name} style={{
-            backgroundColor: plan.highlight ? '#1e3a5f' : '#1e293b',
-            border: plan.highlight ? '1px solid rgba(59,130,246,0.4)' : '1px solid rgba(255,255,255,0.07)',
-            borderRadius: '14px',
-            padding: '2rem',
-            position: 'relative',
-            display: 'flex', flexDirection: 'column',
-          }}>
-            {plan.highlight && (
-              <div style={{
-                position: 'absolute', top: '-12px', left: '50%', transform: 'translateX(-50%)',
-                backgroundColor: '#3b82f6', color: '#fff',
-                fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.06em',
-                padding: '0.25rem 0.875rem', borderRadius: '100px',
-              }}>
-                MOST POPULAR
-              </div>
-            )}
+      <section className="mx-auto max-w-6xl px-10 pb-24">
+        <div className="grid items-stretch gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {plans.map(plan => (
+            <div
+              key={plan.name}
+              className={cn(
+                'relative flex flex-col rounded-2xl border p-8',
+                plan.highlight
+                  ? 'border-blue-500/40 bg-[#1e3a5f]'
+                  : 'border-white/[0.07] bg-[#1e293b]'
+              )}
+            >
+              {plan.highlight && (
+                <div className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-blue-500 px-3.5 py-1 text-[0.7rem] font-bold tracking-widest text-white">
+                  MOST POPULAR
+                </div>
+              )}
 
-            <div style={{ marginBottom: '1.5rem' }}>
-              <div style={{ color: '#94a3b8', fontSize: '0.8rem', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: '0.5rem' }}>
-                {plan.name}
+              <div className="mb-6">
+                <div className="mb-2 text-xs font-semibold uppercase tracking-widest text-slate-400">
+                  {plan.name}
+                </div>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-4xl font-extrabold tracking-tight text-white" style={{ letterSpacing: '-0.03em' }}>
+                    {plan.usdPrice === null ? 'Custom' : formatPrice(plan.usdPrice)}
+                  </span>
+                  {plan.sub && <span className="text-sm text-slate-500">{plan.sub}</span>}
+                </div>
+                <p className="mt-2.5 text-sm leading-snug text-slate-400">{plan.desc}</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '0.375rem' }}>
-                <span style={{ color: '#f8fafc', fontSize: '2.25rem', fontWeight: 800, letterSpacing: '-0.03em' }}>
-                  {plan.usdPrice === null ? 'Custom' : formatPrice(plan.usdPrice)}
-                </span>
-                {plan.sub && <span style={{ color: '#64748b', fontSize: '0.875rem' }}>{plan.sub}</span>}
-              </div>
-              <p style={{ color: '#94a3b8', fontSize: '0.85rem', lineHeight: 1.55, margin: '0.625rem 0 0' }}>
-                {plan.desc}
-              </p>
+
+              <ul className="mb-7 flex flex-1 flex-col gap-2">
+                {plan.features.map(f => (
+                  <li key={f} className="flex gap-2 text-sm text-slate-300">
+                    <span className="shrink-0 font-bold text-blue-400">✓</span>
+                    {f}
+                  </li>
+                ))}
+              </ul>
+
+              <Button asChild variant={plan.highlight ? 'default' : 'outline'} className="w-full">
+                <Link href={plan.href}>{plan.cta}</Link>
+              </Button>
             </div>
-
-            <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 1.75rem', display: 'flex', flexDirection: 'column', gap: '0.5rem', flex: 1 }}>
-              {plan.features.map(f => (
-                <li key={f} style={{ display: 'flex', gap: '0.5rem', color: '#cbd5e1', fontSize: '0.875rem' }}>
-                  <span style={{ color: '#3b82f6', fontWeight: 700, flexShrink: 0 }}>✓</span>
-                  {f}
-                </li>
-              ))}
-            </ul>
-
-            <Link href={plan.href} style={{
-              display: 'block', textAlign: 'center',
-              padding: '0.675rem',
-              backgroundColor: plan.highlight ? '#3b82f6' : 'transparent',
-              color: plan.highlight ? '#fff' : '#94a3b8',
-              border: plan.highlight ? 'none' : '1px solid rgba(255,255,255,0.14)',
-              borderRadius: '8px',
-              textDecoration: 'none',
-              fontWeight: 600, fontSize: '0.875rem',
-            }}>
-              {plan.cta}
-            </Link>
-          </div>
-        ))}
+          ))}
+        </div>
       </section>
 
-      <section style={{ maxWidth: '700px', margin: '0 auto', padding: '0 2.5rem 6rem', textAlign: 'center' }}>
-        <h2 style={{ color: '#f8fafc', fontSize: '1.25rem', fontWeight: 700, margin: '0 0 0.75rem' }}>
-          Still have questions?
-        </h2>
-        <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: '0 0 1.25rem' }}>
+      <section className="mx-auto max-w-xl px-10 pb-24 text-center">
+        <h2 className="mb-3 text-xl font-bold text-white">Still have questions?</h2>
+        <p className="mb-5 text-sm text-slate-400">
           We&apos;re happy to walk you through the product or help you pick the right plan.
         </p>
-        <a href="mailto:hello@slotfill.io" style={{ color: '#93c5fd', fontSize: '0.9rem', textDecoration: 'none', fontWeight: 500 }}>
+        <a href="mailto:hello@slotfill.io" className="text-sm font-medium text-blue-300 hover:text-blue-200">
           hello@slotfill.io
         </a>
       </section>

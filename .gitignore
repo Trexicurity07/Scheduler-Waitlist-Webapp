@@ -8,3 +8,4 @@ node_modules/
 .obsidian/
 .VSCodeCounter/
 .claude/settings.local.json
+.codegraph/

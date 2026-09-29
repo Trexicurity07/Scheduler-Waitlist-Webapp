@@ -3,18 +3,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
+import { Input } from '@/components/ui/input'
 
 type BizResult = { id: string; name: string; business_type: string; public_slug: string }
-
-const C = {
-  bg: '#0f172a',
-  surface: '#1e293b',
-  border: 'rgba(255,255,255,0.08)',
-  borderHover: '#3b82f6',
-  text: '#f8fafc',
-  textMuted: '#94a3b8',
-  accent: '#3b82f6',
-}
 
 export default function BrowsePage() {
   const router = useRouter()
@@ -37,51 +28,40 @@ export default function BrowsePage() {
   }, [query])
 
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: C.bg, color: C.text, fontFamily: 'system-ui, sans-serif' }}>
-      <header style={{
-        backgroundColor: C.bg, borderBottom: `1px solid ${C.border}`,
-        padding: '0 1.5rem', height: '56px', display: 'flex', alignItems: 'center',
-        gap: '2rem', position: 'sticky', top: 0, zIndex: 100,
-      }}>
-        <Link href="/" style={{ color: C.text, fontWeight: 700, fontSize: '1rem', textDecoration: 'none', letterSpacing: '-0.01em' }}>
+    <main className="min-h-screen bg-[#0f172a] text-white">
+      <header className="sticky top-0 z-50 flex h-14 items-center gap-8 border-b border-white/[0.08] bg-[#0f172a] px-6">
+        <Link href="/" className="text-base font-bold tracking-tight text-white">
           SlotFill
         </Link>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <Link href="/client/login" style={{ color: C.textMuted, fontSize: '0.875rem', textDecoration: 'none' }}>Log in</Link>
-          <Link href="/client/signup" style={{
-            padding: '0.375rem 0.75rem', backgroundColor: C.accent, color: '#fff',
-            borderRadius: '6px', fontSize: '0.875rem', textDecoration: 'none', fontWeight: 600,
-          }}>Sign up</Link>
+        <div className="ml-auto flex items-center gap-3">
+          <Link href="/client/login" className="text-sm text-slate-400 hover:text-white">Log in</Link>
+          <Link href="/client/signup" className="rounded-md bg-blue-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-blue-400">
+            Sign up
+          </Link>
         </div>
       </header>
 
-      <div style={{ maxWidth: '720px', margin: '0 auto', padding: '2.5rem 1rem' }}>
-        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, color: C.text, margin: '0 0 0.4rem' }}>Browse businesses</h1>
-        <p style={{ color: C.textMuted, marginBottom: '1.75rem', fontSize: '0.9rem' }}>
-          Find a business and join their waitlist.
-        </p>
+      <div className="mx-auto max-w-2xl px-4 py-10">
+        <h1 className="mb-1 text-2xl font-bold text-white">Browse businesses</h1>
+        <p className="mb-7 text-sm text-slate-400">Find a business and join their waitlist.</p>
 
-        <input
+        <Input
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by business name…"
           autoFocus
-          style={{
-            width: '100%', padding: '0.75rem 1rem', backgroundColor: C.surface,
-            border: `1px solid ${C.border}`, borderRadius: '8px', color: C.text,
-            fontSize: '1rem', outline: 'none', boxSizing: 'border-box', marginBottom: '1.5rem',
-          }}
+          className="mb-6 bg-[#1e293b] text-base placeholder:text-slate-500"
         />
 
         {loading ? (
-          <p style={{ color: C.textMuted, fontSize: '0.875rem' }}>Loading…</p>
+          <p className="text-sm text-slate-400">Loading…</p>
         ) : results.length === 0 ? (
-          <p style={{ color: C.textMuted, fontSize: '0.875rem' }}>
+          <p className="text-sm text-slate-400">
             {query ? `No businesses found for "${query}".` : 'No businesses available yet.'}
           </p>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          <div className="flex flex-col gap-3">
             {results.map((biz) => (
               <BizCard key={biz.id} biz={biz} onClick={() => router.push(`/browse/${biz.public_slug}`)} />
             ))}
@@ -93,20 +73,13 @@ export default function BrowsePage() {
 }
 
 function BizCard({ biz, onClick }: { biz: BizResult; onClick: () => void }) {
-  const [hovered, setHovered] = useState(false)
   return (
     <button
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        backgroundColor: C.surface, border: `1px solid ${hovered ? C.borderHover : C.border}`,
-        borderRadius: '10px', padding: '1rem 1.25rem', textAlign: 'left', cursor: 'pointer',
-        color: C.text, width: '100%', transition: 'border-color 0.15s',
-      }}
+      className="w-full rounded-xl border border-white/[0.08] bg-[#1e293b] px-5 py-4 text-left transition-colors hover:border-blue-500/60"
     >
-      <div style={{ fontWeight: 600, fontSize: '1rem', marginBottom: '0.25rem' }}>{biz.name}</div>
-      <div style={{ color: C.textMuted, fontSize: '0.8rem' }}>{biz.business_type}</div>
+      <div className="mb-1 text-base font-semibold text-white">{biz.name}</div>
+      <div className="text-xs text-slate-400">{biz.business_type}</div>
     </button>
   )
 }

@@ -2,9 +2,9 @@ import ClientNav from './client-nav'
 
 export default function ClientAppLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: '#0f172a' }}>
+    <div className="flex flex-col min-h-screen bg-[#0f172a]">
       <ClientNav />
-      <div style={{ flex: 1, padding: '2.5rem 1.5rem', maxWidth: '900px', width: '100%', margin: '0 auto' }}>
+      <div className="flex-1 w-full max-w-4xl mx-auto px-6 py-10">
         {children}
       </div>
     </div>

@@ -2,7 +2,10 @@
 
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { smallInputStyle, smallLabelStyle, colors } from '@/lib/ui/theme'
+import { cn } from '@/lib/utils'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 
 const DAYS = [
   { value: 0, label: 'Sun' },
@@ -52,26 +55,40 @@ export function AddEntryForm({ waitlistId }: Props) {
     router.refresh()
   }
 
+  const disabled = status === 'submitting' || selectedDays.length === 0
+
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
-      <label style={smallLabelStyle}>
-        Client email or phone
-        <input type="text" value={identifier} onChange={(e) => setIdentifier(e.target.value)} placeholder="email@example.com or +15551234567" required style={smallInputStyle} />
-      </label>
+    <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
+      <div className="flex flex-col gap-1.5">
+        <Label htmlFor="identifier" className="text-slate-300">Client email or phone</Label>
+        <Input
+          id="identifier"
+          type="text"
+          value={identifier}
+          onChange={(e) => setIdentifier(e.target.value)}
+          placeholder="email@example.com or +15551234567"
+          required
+          className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-600"
+        />
+      </div>
 
       <div>
-        <div style={{ fontSize: '0.8rem', fontWeight: 500, color: colors.textLabel, marginBottom: '0.5rem' }}>Days available</div>
-        <div style={{ display: 'flex', gap: '0.375rem', flexWrap: 'wrap' }}>
+        <p className="text-xs font-medium text-slate-300 mb-2">Days available</p>
+        <div className="flex gap-1.5 flex-wrap">
           {DAYS.map((day) => {
             const active = selectedDays.includes(day.value)
             return (
-              <button key={day.value} type="button" onClick={() => toggleDay(day.value)} style={{
-                padding: '0.3rem 0.6rem', borderRadius: '5px', border: '1px solid',
-                borderColor: active ? colors.accent : colors.inputBorder,
-                backgroundColor: active ? 'rgba(59,130,246,0.15)' : 'transparent',
-                color: active ? '#93c5fd' : colors.textMuted,
-                fontSize: '0.75rem', fontWeight: active ? 600 : 400, cursor: 'pointer',
-              }}>
+              <button
+                key={day.value}
+                type="button"
+                onClick={() => toggleDay(day.value)}
+                className={cn(
+                  'px-2.5 py-1 rounded text-xs font-medium border transition-colors cursor-pointer',
+                  active
+                    ? 'border-blue-500/40 bg-blue-500/15 text-blue-300 font-semibold'
+                    : 'border-white/[0.12] bg-transparent text-slate-500 hover:text-slate-300'
+                )}
+              >
                 {day.label}
               </button>
             )
@@ -79,21 +96,38 @@ export function AddEntryForm({ waitlistId }: Props) {
         </div>
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-        <label style={smallLabelStyle}>From<input type="time" value={start} onChange={(e) => setStart(e.target.value)} required style={smallInputStyle} /></label>
-        <label style={smallLabelStyle}>To<input type="time" value={end} onChange={(e) => setEnd(e.target.value)} required style={smallInputStyle} /></label>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="start" className="text-slate-300">From</Label>
+          <Input
+            id="start"
+            type="time"
+            value={start}
+            onChange={(e) => setStart(e.target.value)}
+            required
+            className="bg-[#0f172a] border-white/[0.12] text-white"
+          />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <Label htmlFor="end" className="text-slate-300">To</Label>
+          <Input
+            id="end"
+            type="time"
+            value={end}
+            onChange={(e) => setEnd(e.target.value)}
+            required
+            className="bg-[#0f172a] border-white/[0.12] text-white"
+          />
+        </div>
       </div>
 
-      {error && <p role="alert" style={{ color: colors.errorText, fontSize: '0.8rem', margin: 0 }}>{error}</p>}
+      {error && (
+        <p role="alert" className="text-xs text-red-400">{error}</p>
+      )}
 
-      <button type="submit" disabled={status === 'submitting' || selectedDays.length === 0} style={{
-        padding: '0.6rem',
-        backgroundColor: status === 'submitting' || selectedDays.length === 0 ? '#93c5fd' : colors.accent,
-        color: '#fff', border: 'none', borderRadius: '7px', fontWeight: 600, fontSize: '0.875rem',
-        cursor: status === 'submitting' || selectedDays.length === 0 ? 'default' : 'pointer',
-      }}>
+      <Button type="submit" disabled={disabled} className="w-full">
         {status === 'submitting' ? 'Adding…' : 'Add to waitlist'}
-      </button>
+      </Button>
     </form>
   )
 }

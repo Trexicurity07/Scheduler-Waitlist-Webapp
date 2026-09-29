@@ -1,5 +1,6 @@
 import { getCurrentClient } from '@/lib/client-auth/get-current-client'
 import { getMyEntries, getMyOffers, getPastEntries } from '@/lib/client-dashboard/manage-own-entries'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import ActiveEntriesSection from './active-entries-section'
 import PendingOffersSection from './pending-offers-section'
 import PastEntriesSection from './past-entries-section'
@@ -14,40 +15,49 @@ export default async function ClientDashboardPage() {
   ])
 
   return (
-    <main style={{ maxWidth: '720px', margin: '0 auto', padding: '2.5rem 1.5rem' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: '0 0 0.25rem' }}>
+    <main className="max-w-2xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-white mb-1">
           Welcome, {profile.name}
         </h1>
-        <p style={{ color: '#64748b', fontSize: '0.875rem', margin: 0 }}>
-          Your waitlists and slot offers
-        </p>
+        <p className="text-slate-400 text-sm">Your waitlists and slot offers</p>
       </div>
 
-      {offers.length > 0 && (
-        <section style={{ marginBottom: '2rem' }}>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#f8fafc', margin: '0 0 0.875rem' }}>
-            Pending slot offers
-          </h2>
+      <Tabs defaultValue={offers.length > 0 ? 'offers' : 'active'}>
+        <TabsList className="bg-white/[0.04] border border-white/[0.08] mb-6">
+          <TabsTrigger value="active" className="data-[state=active]:bg-[#1e293b] data-[state=active]:text-white">
+            Active
+            {entries.length > 0 && (
+              <span className="ml-1.5 text-xs bg-blue-500/20 text-blue-400 rounded-full px-1.5 py-0.5">
+                {entries.length}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="offers" className="data-[state=active]:bg-[#1e293b] data-[state=active]:text-white">
+            Pending Offers
+            {offers.length > 0 && (
+              <span className="ml-1.5 text-xs bg-sky-500/20 text-sky-400 rounded-full px-1.5 py-0.5">
+                {offers.length}
+              </span>
+            )}
+          </TabsTrigger>
+          <TabsTrigger value="past" className="data-[state=active]:bg-[#1e293b] data-[state=active]:text-white">
+            Past
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="active">
+          <ActiveEntriesSection entries={entries} />
+        </TabsContent>
+
+        <TabsContent value="offers">
           <PendingOffersSection offers={offers} />
-        </section>
-      )}
+        </TabsContent>
 
-      <section style={{ marginBottom: '2rem' }}>
-        <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#f8fafc', margin: '0 0 0.875rem' }}>
-          Your active waitlists
-        </h2>
-        <ActiveEntriesSection entries={entries} />
-      </section>
-
-      {past.length > 0 && (
-        <section>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#f8fafc', margin: '0 0 0.875rem' }}>
-            Past waitlists
-          </h2>
+        <TabsContent value="past">
           <PastEntriesSection entries={past} />
-        </section>
-      )}
+        </TabsContent>
+      </Tabs>
     </main>
   )
 }

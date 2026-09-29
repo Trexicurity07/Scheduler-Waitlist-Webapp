@@ -4,7 +4,9 @@ import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { FieldError } from '@/components/field-error'
-import { inputStyle, labelStyle, pageWrapperStyle, h1Style, subtitleStyle, showPasswordBtnStyle } from '@/lib/ui/theme'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 export default function LoginPage() {
   const [identifier, setIdentifier] = useState('')
@@ -33,70 +35,75 @@ export default function LoginPage() {
   }
 
   return (
-    <main style={pageWrapperStyle}>
-      <div style={{ marginBottom: '2rem' }}>
-        <Link href="/" style={{ color: '#64748b', fontSize: '0.8rem' }}>← Home</Link>
-        <h1 style={h1Style}>Business owner login</h1>
-        <p style={subtitleStyle}>Sign in to your SlotFill dashboard.</p>
-      </div>
+    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
+            <span className="text-blue-400 font-bold text-lg">S</span>
+          </div>
+          <h1 className="text-xl font-semibold text-white">Business owner login</h1>
+          <p className="text-sm text-slate-400 mt-1">Sign in to your SlotFill dashboard.</p>
+        </div>
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <label style={labelStyle}>
-          Email or business name
-          <input
-            type="text"
-            value={identifier}
-            onChange={(e) => setIdentifier(e.target.value)}
-            required
-            autoComplete="username"
-            placeholder="you@example.com or Your Business"
-            maxLength={254}
-            style={inputStyle}
-          />
-        </label>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label style={labelStyle}>
-            Password
-            <div style={{ position: 'relative' }}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="identifier">Email or business name</Label>
+              <Input
+                id="identifier"
+                type="text"
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 required
-                autoComplete="current-password"
-                style={{ ...inputStyle, paddingRight: '4rem' }}
+                autoComplete="username"
+                placeholder="you@example.com or Your Business"
+                maxLength={254}
+                className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-500"
               />
-              <button type="button" onClick={() => setShowPassword((v) => !v)} style={showPasswordBtnStyle}>
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
             </div>
-          </label>
-          {error && <FieldError message={error} />}
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                  autoComplete="current-password"
+                  className="bg-[#0f172a] border-white/[0.12] text-white pr-16"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-200"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {error && <FieldError message={error} />}
+            </div>
+
+            <div className="text-right">
+              <Link href="/forgot-password" className="text-xs text-slate-400 hover:text-slate-200">
+                Forgot password?
+              </Link>
+            </div>
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Signing in…' : 'Log in'}
+            </Button>
+          </form>
         </div>
 
-        <div style={{ textAlign: 'right', marginTop: '-0.25rem' }}>
-          <Link href="/forgot-password" style={{ color: '#64748b', fontSize: '0.8rem' }}>Forgot password?</Link>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: '0.675rem',
-            backgroundColor: loading ? '#93c5fd' : '#3b82f6',
-            color: '#fff', border: 'none', borderRadius: '7px',
-            fontWeight: 600, fontSize: '0.875rem', cursor: loading ? 'default' : 'pointer',
-          }}
-        >
-          {loading ? 'Signing in…' : 'Log in'}
-        </button>
-      </form>
-
-      <p style={{ marginTop: '1.25rem', fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>
-        Don&apos;t have an account?{' '}
-        <Link href="/signup" style={{ color: '#3b82f6' }}>Create one</Link>
-      </p>
+        <p className="mt-4 text-xs text-slate-500 text-center">
+          Don&apos;t have an account?{' '}
+          <Link href="/signup" className="text-blue-400 hover:text-blue-300">
+            Create one
+          </Link>
+        </p>
+      </div>
     </main>
   )
 }

@@ -1,5 +1,7 @@
 import Link from 'next/link'
 import MarketingLayout from '@/components/marketing-layout'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 
 const features = [
   {
@@ -20,115 +22,57 @@ export default function HomePage() {
   return (
     <MarketingLayout>
       {/* Hero */}
-      <section style={{
-        maxWidth: '900px', margin: '0 auto',
-        padding: '6rem 2.5rem 5rem',
-        textAlign: 'center',
-      }}>
-        <div style={{
-          display: 'inline-block',
-          backgroundColor: 'rgba(59,130,246,0.12)',
-          border: '1px solid rgba(59,130,246,0.25)',
-          borderRadius: '100px',
-          padding: '0.3rem 0.9rem',
-          fontSize: '0.78rem',
-          fontWeight: 600,
-          color: '#93c5fd',
-          letterSpacing: '0.04em',
-          marginBottom: '1.5rem',
-        }}>
-          Now in early access
+      <section className="relative overflow-hidden bg-gradient-to-br from-[#0f172a] via-[#0f172a] to-[#1e1b4b]">
+        <div className="mx-auto max-w-4xl px-10 py-24 text-center md:py-32">
+          <div className="mb-6 inline-block rounded-full border border-blue-500/25 bg-blue-500/10 px-3.5 py-1 text-xs font-semibold tracking-widest text-blue-300">
+            NOW IN EARLY ACCESS
+          </div>
+          <h1 className="mb-5 text-5xl font-extrabold leading-tight text-white md:text-6xl" style={{ letterSpacing: '-0.03em' }}>
+            Book the slot<br />that opened up.
+          </h1>
+          <p className="mx-auto mb-10 max-w-xl text-lg leading-relaxed text-slate-400">
+            Join the waitlist. Get notified instantly when a cancellation matches your schedule.
+          </p>
+          <div className="flex flex-wrap justify-center gap-3.5">
+            <Button asChild size="lg">
+              <Link href="/browse">Browse businesses</Link>
+            </Button>
+            <Button asChild size="lg" variant="outline">
+              <Link href="/signup">Owner signup</Link>
+            </Button>
+          </div>
         </div>
-        <h1 style={{
-          fontSize: 'clamp(2.25rem, 5vw, 3.5rem)',
-          fontWeight: 800,
-          color: '#f8fafc',
-          lineHeight: 1.1,
-          letterSpacing: '-0.03em',
-          margin: '0 0 1.25rem',
-        }}>
-          Fill every cancellation.<br />Automatically.
-        </h1>
-        <p style={{
-          color: '#94a3b8',
-          fontSize: '1.1rem',
-          lineHeight: 1.65,
-          maxWidth: '540px',
-          margin: '0 auto 2.5rem',
-        }}>
-          SlotFill connects to your Google Calendar and manages your waitlist for you — notifying the right client the moment a spot opens up.
-        </p>
-        <div style={{ display: 'flex', gap: '0.875rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <Link href="/signup" style={{
-            padding: '0.75rem 1.75rem',
-            backgroundColor: '#3b82f6', color: '#fff',
-            borderRadius: '8px', textDecoration: 'none',
-            fontWeight: 600, fontSize: '0.9rem',
-          }}>
-            Get started free
-          </Link>
-          <Link href="/pricing" style={{
-            padding: '0.75rem 1.75rem',
-            backgroundColor: 'transparent', color: '#cbd5e1',
-            border: '1px solid rgba(255,255,255,0.14)',
-            borderRadius: '8px', textDecoration: 'none',
-            fontWeight: 500, fontSize: '0.9rem',
-          }}>
-            See pricing
-          </Link>
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="absolute left-1/2 top-0 h-[500px] w-[800px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-blue-600/10 blur-3xl" />
         </div>
       </section>
 
       {/* Features */}
-      <section style={{
-        maxWidth: '1100px', margin: '0 auto',
-        padding: '0 2.5rem 6rem',
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-        gap: '1.25rem',
-      }}>
-        {features.map(f => (
-          <div key={f.title} style={{
-            backgroundColor: '#1e293b',
-            border: '1px solid rgba(255,255,255,0.07)',
-            borderRadius: '12px',
-            padding: '1.75rem',
-          }}>
-            <h3 style={{ color: '#f8fafc', fontWeight: 600, fontSize: '1rem', margin: '0 0 0.625rem' }}>
-              {f.title}
-            </h3>
-            <p style={{ color: '#64748b', fontSize: '0.875rem', lineHeight: 1.65, margin: 0 }}>
-              {f.desc}
-            </p>
-          </div>
-        ))}
+      <section className="mx-auto max-w-6xl px-10 pb-24 pt-16">
+        <div className="grid gap-5 sm:grid-cols-3">
+          {features.map(f => (
+            <Card key={f.title} className="border-white/[0.07] bg-[#1e293b]">
+              <CardContent className="p-7">
+                <h3 className="mb-2.5 text-base font-semibold text-white">{f.title}</h3>
+                <p className="text-sm leading-relaxed text-slate-500">{f.desc}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </section>
 
       {/* CTA banner */}
-      <section style={{
-        maxWidth: '1100px', margin: '0 auto',
-        padding: '0 2.5rem 6rem',
-      }}>
-        <div style={{
-          backgroundColor: '#1e293b',
-          border: '1px solid rgba(59,130,246,0.2)',
-          borderRadius: '14px',
-          padding: '3rem 2.5rem',
-          textAlign: 'center',
-        }}>
-          <h2 style={{ color: '#f8fafc', fontSize: '1.6rem', fontWeight: 700, margin: '0 0 0.75rem', letterSpacing: '-0.02em' }}>
+      <section className="mx-auto max-w-6xl px-10 pb-24">
+        <div className="rounded-2xl border border-blue-500/20 bg-[#1e293b] px-10 py-12 text-center">
+          <h2 className="mb-3 text-2xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>
             Ready to stop leaving slots empty?
           </h2>
-          <p style={{ color: '#94a3b8', fontSize: '0.9rem', margin: '0 0 1.75rem' }}>
+          <p className="mb-7 text-sm text-slate-400">
             Set up takes under 5 minutes. No credit card required.
           </p>
-          <Link href="/signup" style={{
-            padding: '0.75rem 2rem',
-            backgroundColor: '#3b82f6', color: '#fff',
-            borderRadius: '8px', textDecoration: 'none',
-            fontWeight: 600, fontSize: '0.9rem',
-          }}>
-            Create your business account
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/signup">Create your business account</Link>
+          </Button>
         </div>
       </section>
     </MarketingLayout>

@@ -2,18 +2,10 @@
 
 import { useState } from 'react'
 import type { ActiveEntry, TimeWindow } from '@/lib/client-dashboard/manage-own-entries'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-const timeInputStyle = {
-  padding: '0.375rem 0.5rem',
-  borderRadius: '5px',
-  border: '1px solid rgba(255,255,255,0.12)',
-  fontSize: '0.8rem',
-  backgroundColor: '#0f172a',
-  color: '#f8fafc',
-  colorScheme: 'dark' as const,
-}
 
 export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry[] }) {
   const [localEntries, setLocalEntries] = useState(entries)
@@ -22,7 +14,14 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
   const [error, setError] = useState<string | null>(null)
 
   if (localEntries.length === 0) {
-    return <p style={{ color: '#64748b', fontSize: '0.875rem' }}>You are not on any waitlists.</p>
+    return (
+      <div className="text-center py-12">
+        <p className="text-slate-500 text-sm">You are not on any waitlists.</p>
+        <a href="/browse" className="text-sm text-blue-400 hover:text-blue-300 transition-colors mt-2 inline-block">
+          Browse businesses →
+        </a>
+      </div>
+    )
   }
 
   async function handleCancel(entryId: string) {
@@ -54,38 +53,30 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+    <div className="space-y-3">
       {error && (
-        <p role="alert" style={{
-          backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
-          color: '#fca5a5', borderRadius: '6px', padding: '0.625rem 0.875rem',
-          fontSize: '0.875rem', margin: 0,
-        }}>
+        <div role="alert" className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
           {error}
-        </p>
+        </div>
       )}
       {localEntries.map((entry) => (
-        <div key={entry.entry_id} style={{
-          backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '10px', padding: '1rem 1.25rem',
-        }}>
-          <div style={{ marginBottom: '0.625rem' }}>
-            <span style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f8fafc' }}>
-              {entry.business_name}
-            </span>
+        <div
+          key={entry.entry_id}
+          className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-4"
+        >
+          <div className="mb-3">
+            <span className="text-sm font-semibold text-white">{entry.business_name}</span>
             {entry.business_type && (
-              <span style={{ fontSize: '0.8rem', color: '#64748b', marginLeft: '0.5rem' }}>
-                · {entry.business_type}
-              </span>
+              <span className="text-xs text-slate-500 ml-2">· {entry.business_type}</span>
             )}
             {entry.whatsapp_number && (
-              <span style={{ fontSize: '0.8rem', color: '#64748b', marginLeft: '0.5rem' }}>
+              <span className="text-xs text-slate-500 ml-2">
                 ·{' '}
                 <a
                   href={`https://wa.me/${entry.whatsapp_number}`}
                   target="_blank"
                   rel="noreferrer"
-                  style={{ color: '#0ea5e9', textDecoration: 'none' }}
+                  className="text-sky-400 hover:text-sky-300 transition-colors"
                 >
                   WhatsApp
                 </a>
@@ -93,21 +84,21 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
             )}
           </div>
           {entry.expires_at && (
-            <p style={{ fontSize: '0.75rem', color: '#64748b', margin: '0 0 0.75rem' }}>
+            <p className="text-xs text-slate-500 mb-3">
               Expires {new Date(entry.expires_at).toLocaleDateString()}
             </p>
           )}
 
           {editingId === entry.entry_id ? (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className="space-y-2">
               {editWindows.map((w, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                <div key={i} className="flex items-center gap-2 flex-wrap">
                   {DAYS.map((label, day) => (
-                    <label key={day} style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', cursor: 'pointer', fontSize: '0.8rem', color: '#cbd5e1' }}>
+                    <label key={day} className="flex items-center gap-1 cursor-pointer text-xs text-slate-300">
                       <input
                         type="checkbox"
                         checked={w.days.includes(day)}
-                        style={{ accentColor: '#0ea5e9' }}
+                        className="accent-sky-500"
                         onChange={() =>
                           setEditWindows((prev) =>
                             prev.map((x, j) =>
@@ -129,18 +120,18 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
                   <input
                     type="time"
                     value={w.start}
-                    style={timeInputStyle}
+                    className="px-2 py-1 rounded-md border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
                     onChange={(e) =>
                       setEditWindows((prev) =>
                         prev.map((x, j) => (j === i ? { ...x, start: e.target.value } : x))
                       )
                     }
                   />
-                  <span style={{ color: '#64748b', fontSize: '0.8rem' }}>–</span>
+                  <span className="text-slate-500 text-xs">–</span>
                   <input
                     type="time"
                     value={w.end}
-                    style={timeInputStyle}
+                    className="px-2 py-1 rounded-md border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
                     onChange={(e) =>
                       setEditWindows((prev) =>
                         prev.map((x, j) => (j === i ? { ...x, end: e.target.value } : x))
@@ -149,47 +140,28 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
                   />
                 </div>
               ))}
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.25rem' }}>
-                <button
-                  onClick={() => handleEditSave(entry.entry_id)}
-                  style={{
-                    padding: '0.4rem 0.875rem', backgroundColor: '#0ea5e9', color: '#fff',
-                    border: 'none', borderRadius: '6px', fontSize: '0.8rem', fontWeight: 600, cursor: 'pointer',
-                  }}
-                >
-                  Save
-                </button>
-                <button
-                  onClick={() => setEditingId(null)}
-                  style={{
-                    padding: '0.4rem 0.875rem', backgroundColor: 'transparent', color: '#94a3b8',
-                    border: '1px solid rgba(255,255,255,0.12)', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer',
-                  }}
-                >
-                  Cancel
-                </button>
+              <div className="flex gap-2 mt-1">
+                <Button size="sm" onClick={() => handleEditSave(entry.entry_id)}>Save</Button>
+                <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>Cancel</Button>
               </div>
             </div>
           ) : (
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
-              <button
+            <div className="flex gap-2">
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={() => { setEditingId(entry.entry_id); setEditWindows(entry.time_windows) }}
-                style={{
-                  padding: '0.4rem 0.875rem', backgroundColor: 'transparent', color: '#94a3b8',
-                  border: '1px solid rgba(255,255,255,0.12)', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer',
-                }}
               >
                 Edit times
-              </button>
-              <button
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
                 onClick={() => handleCancel(entry.entry_id)}
-                style={{
-                  padding: '0.4rem 0.875rem', backgroundColor: 'transparent', color: '#f87171',
-                  border: '1px solid rgba(239,68,68,0.3)', borderRadius: '6px', fontSize: '0.8rem', cursor: 'pointer',
-                }}
+                className="text-red-400 border-red-500/30 hover:bg-red-500/10 hover:border-red-500/50"
               >
                 Leave waitlist
-              </button>
+              </Button>
             </div>
           )}
         </div>

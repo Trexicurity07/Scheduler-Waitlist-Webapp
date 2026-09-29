@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FieldError } from '@/components/field-error'
-import { inputStyle, labelStyle, pageWrapperStyle, h1Style, subtitleStyle, showPasswordBtnStyle, hintTextStyle } from '@/lib/ui/theme'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import { useLocalPrice } from '@/lib/hooks/use-local-price'
 
 const PLANS = [
@@ -111,191 +113,217 @@ function SignupPageContent() {
 
   if (step === 'payment') {
     return (
-      <main style={pageWrapperStyle}>
-        <div style={{ marginBottom: '2rem' }}>
-          <button onClick={() => setStep('form')} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '0.8rem', cursor: 'pointer', padding: 0 }}>← Start over</button>
-          <h1 style={h1Style}>Complete your {selectedPlan.label} subscription</h1>
-          <p style={subtitleStyle}>You&apos;re almost there — enter your payment details below.</p>
-        </div>
+      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+        <div className="w-full max-w-sm">
+          <div className="mb-6">
+            <button onClick={() => setStep('form')} className="text-xs text-slate-400 hover:text-slate-200 mb-4">
+              ← Start over
+            </button>
+            <h1 className="text-xl font-semibold text-white">Complete your {selectedPlan.label} subscription</h1>
+            <p className="text-sm text-slate-400 mt-1">You&apos;re almost there — enter your payment details below.</p>
+          </div>
 
-        <form onSubmit={handlePayment} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{
-            backgroundColor: '#1e293b',
-            border: '1px solid rgba(59,130,246,0.3)',
-            borderRadius: '10px',
-            padding: '1rem 1.25rem',
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-          }}>
-            <div>
-              <div style={{ color: '#f8fafc', fontWeight: 600, fontSize: '0.9rem' }}>{selectedPlan.label} plan</div>
-              <div style={{ color: '#64748b', fontSize: '0.775rem', marginTop: '0.15rem' }}>Billed monthly · cancel anytime</div>
+          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6 space-y-4">
+            <div className="flex justify-between items-center bg-blue-500/5 border border-blue-500/20 rounded-lg px-4 py-3">
+              <div>
+                <div className="text-sm font-semibold text-white">{selectedPlan.label} plan</div>
+                <div className="text-xs text-slate-500 mt-0.5">Billed monthly · cancel anytime</div>
+              </div>
+              <div className="text-blue-400 font-bold">{formatPrice(selectedPlan.usdPrice)}/mo</div>
             </div>
-            <div style={{ color: '#3b82f6', fontWeight: 700, fontSize: '1.05rem' }}>{formatPrice(selectedPlan.usdPrice)}/mo</div>
-          </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>
-              Cardholder name
-              <input type="text" value={cardName} onChange={(e) => setCardName(e.target.value)} required placeholder="Jane Smith" autoComplete="cc-name" style={inputStyle} />
-            </label>
-          </div>
+            <form onSubmit={handlePayment} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label>Cardholder name</Label>
+                <Input type="text" value={cardName} onChange={(e) => setCardName(e.target.value)} required placeholder="Jane Smith" autoComplete="cc-name" className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-500" />
+              </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>
-              Card number
-              <input
-                type="text" inputMode="numeric" value={cardNumber}
-                onChange={(e) => {
-                  const d = e.target.value.replace(/\D/g, '').slice(0, 16)
-                  setCardNumber(d.match(/.{1,4}/g)?.join(' ') ?? d)
-                }}
-                required placeholder="1234 5678 9012 3456" autoComplete="cc-number" maxLength={19} style={inputStyle}
-              />
-            </label>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label style={labelStyle}>
-                Expiry
-                <input
-                  type="text" inputMode="numeric" value={cardExpiry}
+              <div className="space-y-1.5">
+                <Label>Card number</Label>
+                <Input
+                  type="text" inputMode="numeric" value={cardNumber}
                   onChange={(e) => {
-                    const raw = e.target.value.replace(/\D/g, '').slice(0, 4)
-                    setCardExpiry(raw.length > 2 ? raw.slice(0, 2) + '/' + raw.slice(2) : raw)
+                    const d = e.target.value.replace(/\D/g, '').slice(0, 16)
+                    setCardNumber(d.match(/.{1,4}/g)?.join(' ') ?? d)
                   }}
-                  required placeholder="MM/YY" autoComplete="cc-exp" maxLength={5} style={inputStyle}
+                  required placeholder="1234 5678 9012 3456" autoComplete="cc-number" maxLength={19}
+                  className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-500"
                 />
-              </label>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <label style={labelStyle}>
-                CVV
-                <input
-                  type="text" inputMode="numeric" value={cardCvv}
-                  onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
-                  required placeholder="123" autoComplete="cc-csc" maxLength={4} style={inputStyle}
-                />
-              </label>
-            </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="space-y-1.5">
+                  <Label>Expiry</Label>
+                  <Input
+                    type="text" inputMode="numeric" value={cardExpiry}
+                    onChange={(e) => {
+                      const raw = e.target.value.replace(/\D/g, '').slice(0, 4)
+                      setCardExpiry(raw.length > 2 ? raw.slice(0, 2) + '/' + raw.slice(2) : raw)
+                    }}
+                    required placeholder="MM/YY" autoComplete="cc-exp" maxLength={5}
+                    className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-500"
+                  />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>CVV</Label>
+                  <Input
+                    type="text" inputMode="numeric" value={cardCvv}
+                    onChange={(e) => setCardCvv(e.target.value.replace(/\D/g, '').slice(0, 4))}
+                    required placeholder="123" autoComplete="cc-csc" maxLength={4}
+                    className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-500"
+                  />
+                </div>
+              </div>
+
+              {payError && <FieldError message={payError} />}
+
+              <Button type="submit" disabled={payLoading} className="w-full">
+                {payLoading ? 'Processing…' : `Pay ${formatPrice(selectedPlan.usdPrice)}/month`}
+              </Button>
+            </form>
           </div>
 
-          {payError && <FieldError message={payError} />}
-
-          <button
-            type="submit" disabled={payLoading}
-            style={{ padding: '0.675rem', backgroundColor: payLoading ? '#93c5fd' : '#3b82f6', color: '#fff', border: 'none', borderRadius: '7px', fontWeight: 600, fontSize: '0.875rem', cursor: payLoading ? 'default' : 'pointer' }}
-          >
-            {payLoading ? 'Processing…' : `Pay ${formatPrice(selectedPlan.usdPrice)}/month`}
-          </button>
-        </form>
-
-        <p style={{ marginTop: '0.875rem', fontSize: '0.75rem', color: '#64748b', textAlign: 'center' }}>
-          Your card details are encrypted and processed securely.
-        </p>
+          <p className="mt-3 text-xs text-slate-500 text-center">
+            Your card details are encrypted and processed securely.
+          </p>
+        </div>
       </main>
     )
   }
 
   if (step === 'verify') {
     return (
-      <main style={pageWrapperStyle}>
-        <div style={{ marginBottom: '2rem' }}>
-          <button onClick={() => setStep('form')} style={{ background: 'none', border: 'none', color: '#64748b', fontSize: '0.8rem', cursor: 'pointer', padding: 0 }}>← Back</button>
-          <h1 style={h1Style}>Check your email</h1>
-          <p style={subtitleStyle}>We sent a 6-digit code to <strong style={{ color: '#f8fafc' }}>{pendingEmail}</strong>. It expires in 15 minutes.</p>
-        </div>
-        <form onSubmit={handleVerify} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-          <div style={{ display: 'flex', flexDirection: 'column' }}>
-            <label style={labelStyle}>
-              Verification code
-              <input type="text" inputMode="numeric" pattern="[0-9]{6}" value={code} onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))} required autoComplete="one-time-code" placeholder="000000" style={{ ...inputStyle, fontSize: '1.25rem', letterSpacing: '0.25em', textAlign: 'center' }} autoFocus />
-            </label>
-            {verifyError && <FieldError message={verifyError} />}
+      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+        <div className="w-full max-w-sm">
+          <div className="mb-6">
+            <button onClick={() => setStep('form')} className="text-xs text-slate-400 hover:text-slate-200 mb-4">
+              ← Back
+            </button>
+            <h1 className="text-xl font-semibold text-white">Check your email</h1>
+            <p className="text-sm text-slate-400 mt-1">
+              We sent a 6-digit code to <strong className="text-white">{pendingEmail}</strong>. It expires in 15 minutes.
+            </p>
           </div>
-          <button type="submit" disabled={verifyLoading || code.length !== 6} style={{ padding: '0.675rem', backgroundColor: verifyLoading || code.length !== 6 ? '#93c5fd' : '#3b82f6', color: '#fff', border: 'none', borderRadius: '7px', fontWeight: 600, fontSize: '0.875rem', cursor: verifyLoading || code.length !== 6 ? 'default' : 'pointer' }}>
-            {verifyLoading ? 'Verifying…' : plan === 'starter' ? 'Verify and create account' : 'Verify and continue to payment'}
-          </button>
-        </form>
-        <p style={{ marginTop: '1rem', fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>
-          Didn&apos;t receive it?{' '}
-          <button onClick={() => { setStep('form'); setCode(''); setVerifyError(null) }} style={{ background: 'none', border: 'none', color: '#3b82f6', fontSize: '0.8rem', cursor: 'pointer', padding: 0 }}>Re-enter your details to resend</button>
-        </p>
+
+          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6 space-y-4">
+            <form onSubmit={handleVerify} className="space-y-4">
+              <div className="space-y-1.5">
+                <Label>Verification code</Label>
+                <Input
+                  type="text" inputMode="numeric" pattern="[0-9]{6}" value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  required autoComplete="one-time-code" placeholder="000000" autoFocus
+                  className="bg-[#0f172a] border-white/[0.12] text-white text-center text-xl tracking-widest placeholder:text-slate-500"
+                />
+                {verifyError && <FieldError message={verifyError} />}
+              </div>
+              <Button type="submit" disabled={verifyLoading || code.length !== 6} className="w-full">
+                {verifyLoading ? 'Verifying…' : plan === 'starter' ? 'Verify and create account' : 'Verify and continue to payment'}
+              </Button>
+            </form>
+          </div>
+
+          <p className="mt-4 text-xs text-slate-500 text-center">
+            Didn&apos;t receive it?{' '}
+            <button
+              onClick={() => { setStep('form'); setCode(''); setVerifyError(null) }}
+              className="text-blue-400 hover:text-blue-300"
+            >
+              Re-enter your details to resend
+            </button>
+          </p>
+        </div>
       </main>
     )
   }
 
   return (
-    <main style={pageWrapperStyle}>
-      <div style={{ marginBottom: '2rem' }}>
-        <Link href="/" style={{ color: '#64748b', fontSize: '0.8rem' }}>← Home</Link>
-        <h1 style={h1Style}>Create your business account</h1>
-        <p style={subtitleStyle}>Set up your SlotFill waitlist in minutes.</p>
-      </div>
-
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-          <div style={{ fontSize: '0.875rem', fontWeight: 500, color: '#94a3b8' }}>Choose your plan</div>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.5rem' }}>
-            {PLANS.map(p => (
-              <button
-                key={p.key}
-                type="button"
-                onClick={() => setPlan(p.key)}
-                style={{
-                  padding: '0.75rem 0.5rem',
-                  backgroundColor: plan === p.key ? 'rgba(59,130,246,0.1)' : 'transparent',
-                  border: `1px solid ${plan === p.key ? 'rgba(59,130,246,0.5)' : 'rgba(255,255,255,0.1)'}`,
-                  borderRadius: '9px',
-                  cursor: 'pointer',
-                  textAlign: 'center',
-                }}
-              >
-                <div style={{ fontWeight: 600, fontSize: '0.8rem', color: plan === p.key ? '#93c5fd' : '#94a3b8' }}>{p.label}</div>
-                <div style={{ fontWeight: 700, fontSize: '1rem', color: '#f8fafc', marginTop: '0.2rem' }}>{formatPrice(p.usdPrice)}</div>
-                <div style={{ fontSize: '0.7rem', color: '#64748b', marginTop: '0.1rem' }}>{p.sub}</div>
-              </button>
-            ))}
+    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4 py-12">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
+            <span className="text-blue-400 font-bold text-lg">S</span>
           </div>
+          <h1 className="text-xl font-semibold text-white">Create your business account</h1>
+          <p className="text-sm text-slate-400 mt-1">Set up your SlotFill waitlist in minutes.</p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label style={labelStyle}>
-            Business name
-            <input type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required autoComplete="organization" placeholder="e.g. City Dental, The Hair Studio" maxLength={80} style={inputStyle} />
-          </label>
-          {error && errorField === 'businessName' && <FieldError message={error} />}
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label style={labelStyle}>
-            Email
-            <input type="email" value={email} onChange={(e) => setEmail(e.target.value.replace(/[^a-zA-Z0-9.@]/g, ''))} required autoComplete="email" maxLength={254} style={inputStyle} />
-          </label>
-          {error && errorField === 'email' && <FieldError message={error} />}
-        </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label style={labelStyle}>
-            Password
-            <span style={hintTextStyle}>8–72 characters · uppercase &amp; lowercase · at least one number · no spaces</span>
-            <div style={{ position: 'relative' }}>
-              <input type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required minLength={8} autoComplete="new-password" style={{ ...inputStyle, paddingRight: '4rem' }} />
-              <button type="button" onClick={() => setShowPassword((v) => !v)} style={showPasswordBtnStyle}>{showPassword ? 'Hide' : 'Show'}</button>
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <div className="text-sm font-medium text-slate-300">Choose your plan</div>
+              <div className="grid grid-cols-3 gap-2">
+                {PLANS.map(p => (
+                  <button
+                    key={p.key}
+                    type="button"
+                    onClick={() => setPlan(p.key)}
+                    className={`py-3 px-2 rounded-lg border text-center transition-colors ${
+                      plan === p.key
+                        ? 'bg-blue-500/10 border-blue-500/50'
+                        : 'bg-transparent border-white/10 hover:border-white/20'
+                    }`}
+                  >
+                    <div className={`font-semibold text-xs ${plan === p.key ? 'text-blue-300' : 'text-slate-400'}`}>{p.label}</div>
+                    <div className="font-bold text-sm text-white mt-0.5">{formatPrice(p.usdPrice)}</div>
+                    <div className="text-xs text-slate-500 mt-0.5">{p.sub}</div>
+                  </button>
+                ))}
+              </div>
             </div>
-          </label>
-          {error && errorField === 'password' && <FieldError message={error} />}
+
+            <div className="space-y-1.5">
+              <Label>Business name</Label>
+              <Input
+                type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)}
+                required autoComplete="organization" placeholder="e.g. City Dental, The Hair Studio" maxLength={80}
+                className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-500"
+              />
+              {error && errorField === 'businessName' && <FieldError message={error} />}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label>Email</Label>
+              <Input
+                type="email" value={email}
+                onChange={(e) => setEmail(e.target.value.replace(/[^a-zA-Z0-9.@]/g, ''))}
+                required autoComplete="email" maxLength={254}
+                className="bg-[#0f172a] border-white/[0.12] text-white"
+              />
+              {error && errorField === 'email' && <FieldError message={error} />}
+            </div>
+
+            <div className="space-y-1.5">
+              <Label>Password</Label>
+              <p className="text-xs text-slate-500">8–72 characters · uppercase &amp; lowercase · at least one number · no spaces</p>
+              <div className="relative">
+                <Input
+                  type={showPassword ? 'text' : 'password'} value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required minLength={8} autoComplete="new-password"
+                  className="bg-[#0f172a] border-white/[0.12] text-white pr-16"
+                />
+                <button
+                  type="button" onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-200"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {error && errorField === 'password' && <FieldError message={error} />}
+            </div>
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Sending code…' : 'Continue'}
+            </Button>
+          </form>
         </div>
 
-        <button type="submit" disabled={loading} style={{ padding: '0.675rem', backgroundColor: loading ? '#93c5fd' : '#3b82f6', color: '#fff', border: 'none', borderRadius: '7px', fontWeight: 600, fontSize: '0.875rem', cursor: loading ? 'default' : 'pointer' }}>
-          {loading ? 'Sending code…' : 'Continue'}
-        </button>
-      </form>
-
-      <p style={{ marginTop: '1.25rem', fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>
-        Already have an account?{' '}
-        <Link href="/login" style={{ color: '#3b82f6' }}>Log in</Link>
-      </p>
+        <p className="mt-4 text-xs text-slate-500 text-center">
+          Already have an account?{' '}
+          <Link href="/login" className="text-blue-400 hover:text-blue-300">Log in</Link>
+        </p>
+      </div>
     </main>
   )
 }

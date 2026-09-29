@@ -2,10 +2,7 @@
 
 import { useState } from 'react'
 import type { OfferDetails } from '@/lib/confirm/confirm-offer'
-
-const pageStyle = { maxWidth: '480px', margin: '6rem auto', padding: '0 1.5rem' }
-const headingStyle = { fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: '0 0 0.5rem' }
-const textStyle = { color: '#94a3b8', fontSize: '0.875rem', lineHeight: 1.6 as const, margin: '0 0 0.375rem' }
+import { Button } from '@/components/ui/button'
 
 export function ConfirmForm({ token, details }: { token: string; details: OfferDetails }) {
   const [state, setState] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle')
@@ -25,53 +22,76 @@ export function ConfirmForm({ token, details }: { token: string; details: OfferD
 
   if (state === 'success') {
     return (
-      <main style={pageStyle}>
-        <h1 style={headingStyle}>You&apos;re all set</h1>
-        <p style={textStyle}>Your appointment at {details.businessName} is confirmed.</p>
+      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+        <div className="w-full max-w-md">
+          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-4">
+              <span className="text-green-400 text-xl">✓</span>
+            </div>
+            <h1 className="text-xl font-semibold text-white mb-2">You&apos;re all set</h1>
+            <p className="text-sm text-slate-400">Your appointment at {details.businessName} is confirmed.</p>
+          </div>
+        </div>
       </main>
     )
   }
 
   if (state === 'error') {
     return (
-      <main style={pageStyle}>
-        <h1 style={headingStyle}>Unable to confirm</h1>
-        <p style={textStyle}>
-          {errorReason === 'already_confirmed'
-            ? "You've already confirmed this slot."
-            : 'This slot is no longer available — someone else may have already taken it.'}
-        </p>
+      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+        <div className="w-full max-w-md">
+          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-8 text-center">
+            <div className="w-12 h-12 rounded-full bg-red-500/10 border border-red-500/20 flex items-center justify-center mx-auto mb-4">
+              <span className="text-red-400 text-xl">✕</span>
+            </div>
+            <h1 className="text-xl font-semibold text-white mb-2">Unable to confirm</h1>
+            <p className="text-sm text-slate-400">
+              {errorReason === 'already_confirmed'
+                ? "You've already confirmed this slot."
+                : 'This slot is no longer available — someone else may have already taken it.'}
+            </p>
+          </div>
+        </div>
       </main>
     )
   }
 
   return (
-    <main style={pageStyle}>
-      <h1 style={headingStyle}>Confirm your appointment</h1>
-      <p style={{ ...textStyle, color: '#f8fafc', fontWeight: 500 }}>{details.businessName}</p>
-      <p style={textStyle}>
-        {new Date(details.startTime).toLocaleString()} – {new Date(details.endTime).toLocaleString()}
-      </p>
-      {details.slotDescription && (
-        <p style={textStyle}>{details.slotDescription}</p>
-      )}
-      <button
-        onClick={handleConfirm}
-        disabled={state === 'submitting'}
-        style={{
-          marginTop: '1.5rem',
-          padding: '0.675rem 1.5rem',
-          backgroundColor: state === 'submitting' ? '#93c5fd' : '#3b82f6',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '7px',
-          fontWeight: 600,
-          fontSize: '0.875rem',
-          cursor: state === 'submitting' ? 'default' : 'pointer',
-        }}
-      >
-        {state === 'submitting' ? 'Confirming…' : 'Confirm this slot'}
-      </button>
+    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+      <div className="w-full max-w-md">
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-8 text-center">
+          <div className="w-12 h-12 rounded-full bg-green-500/10 border border-green-500/20 flex items-center justify-center mx-auto mb-4">
+            <span className="text-green-400 text-xl">📅</span>
+          </div>
+          <h1 className="text-xl font-semibold text-white mb-2">Confirm your appointment</h1>
+
+          <div className="bg-white/[0.04] rounded-lg p-4 mb-6 text-left space-y-2">
+            <p className="text-sm font-medium text-white">{details.businessName}</p>
+            <p className="text-sm text-slate-300">
+              {new Date(details.startTime).toLocaleString()} – {new Date(details.endTime).toLocaleTimeString()}
+            </p>
+            {details.slotDescription && (
+              <p className="text-sm text-slate-400">{details.slotDescription}</p>
+            )}
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              onClick={handleConfirm}
+              disabled={state === 'submitting'}
+              className="flex-1"
+            >
+              {state === 'submitting' ? 'Confirming…' : 'Confirm this slot'}
+            </Button>
+            <a
+              href={`/confirm/${token}?decline=true`}
+              className="flex-1 inline-flex items-center justify-center rounded-md border border-white/[0.12] text-sm font-medium text-slate-300 hover:bg-white/[0.04] hover:text-white transition-colors h-10 px-4"
+            >
+              Decline
+            </a>
+          </div>
+        </div>
+      </div>
     </main>
   )
 }

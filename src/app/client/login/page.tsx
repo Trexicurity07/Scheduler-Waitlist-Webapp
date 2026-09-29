@@ -4,7 +4,9 @@ import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { FieldError } from '@/components/field-error'
-import { inputStyle, labelStyle, pageWrapperStyle, h1Style, subtitleStyle, showPasswordBtnStyle } from '@/lib/ui/theme'
+import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
 
 function detectField(msg: string): 'identifier' | 'password' {
   const m = msg.toLowerCase()
@@ -43,73 +45,78 @@ export default function ClientLoginPage() {
   }
 
   return (
-    <main style={pageWrapperStyle}>
-      <div style={{ marginBottom: '2rem' }}>
-        <Link href="/" style={{ color: '#64748b', fontSize: '0.8rem' }}>← Home</Link>
-        <h1 style={h1Style}>Client login</h1>
-        <p style={subtitleStyle}>Sign in to view your waitlists and slot offers.</p>
-      </div>
-
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label style={labelStyle}>
-            Email, phone, or name
-            <input
-              type="text"
-              value={form.identifier}
-              onChange={(e) => setForm({ ...form, identifier: e.target.value })}
-              required
-              autoComplete="username"
-              placeholder="Email, phone, or your name"
-              maxLength={254}
-              style={inputStyle}
-            />
-          </label>
-          {error && errorField === 'identifier' && <FieldError message={error} />}
+    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+      <div className="w-full max-w-sm">
+        <div className="mb-8 text-center">
+          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
+            <span className="text-blue-400 font-bold text-lg">S</span>
+          </div>
+          <h1 className="text-xl font-semibold text-white">Client login</h1>
+          <p className="text-sm text-slate-400 mt-1">Sign in to view your waitlists and slot offers.</p>
         </div>
 
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <label style={labelStyle}>
-            Password
-            <div style={{ position: 'relative' }}>
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={form.password}
-                onChange={(e) => setForm({ ...form, password: e.target.value })}
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="identifier">Email, phone, or name</Label>
+              <Input
+                id="identifier"
+                type="text"
+                value={form.identifier}
+                onChange={(e) => setForm({ ...form, identifier: e.target.value })}
                 required
-                autoComplete="current-password"
-                style={{ ...inputStyle, paddingRight: '4rem' }}
+                autoComplete="username"
+                placeholder="Email, phone, or your name"
+                maxLength={254}
               />
-              <button type="button" onClick={() => setShowPassword((v) => !v)} style={showPasswordBtnStyle}>
-                {showPassword ? 'Hide' : 'Show'}
-              </button>
+              {error && errorField === 'identifier' && <FieldError message={error} />}
             </div>
-          </label>
-          {error && errorField === 'password' && <FieldError message={error} />}
+
+            <div className="space-y-1.5">
+              <Label htmlFor="password">Password</Label>
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  required
+                  autoComplete="current-password"
+                  className="pr-16"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((v) => !v)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+                >
+                  {showPassword ? 'Hide' : 'Show'}
+                </button>
+              </div>
+              {error && errorField === 'password' && <FieldError message={error} />}
+            </div>
+
+            <div className="text-right -mt-1">
+              <Link href="/client/forgot-password" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+                Forgot password?
+              </Link>
+            </div>
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Signing in…' : 'Log in'}
+            </Button>
+          </form>
         </div>
 
-        <div style={{ textAlign: 'right', marginTop: '-0.25rem' }}>
-          <Link href="/client/forgot-password" style={{ color: '#64748b', fontSize: '0.8rem' }}>Forgot password?</Link>
-        </div>
-
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            padding: '0.675rem',
-            backgroundColor: loading ? '#7dd3fc' : '#0ea5e9',
-            color: '#fff', border: 'none', borderRadius: '7px',
-            fontWeight: 600, fontSize: '0.875rem', cursor: loading ? 'default' : 'pointer',
-          }}
-        >
-          {loading ? 'Signing in…' : 'Log in'}
-        </button>
-      </form>
-
-      <p style={{ marginTop: '1.25rem', fontSize: '0.8rem', color: '#64748b', textAlign: 'center' }}>
-        No account?{' '}
-        <Link href="/client/signup" style={{ color: '#0ea5e9' }}>Sign up</Link>
-      </p>
+        <p className="mt-5 text-xs text-slate-500 text-center">
+          No account?{' '}
+          <Link href="/client/signup" className="text-sky-400 hover:text-sky-300 transition-colors">
+            Sign up
+          </Link>
+        </p>
+        <p className="mt-2 text-xs text-slate-600 text-center">
+          <Link href="/" className="hover:text-slate-400 transition-colors">← Home</Link>
+        </p>
+      </div>
     </main>
   )
 }

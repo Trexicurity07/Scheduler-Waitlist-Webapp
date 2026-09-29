@@ -2,18 +2,10 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-
-const timeInputStyle = {
-  padding: '0.375rem 0.5rem',
-  borderRadius: '5px',
-  border: '1px solid rgba(255,255,255,0.12)',
-  fontSize: '0.8rem',
-  backgroundColor: '#0f172a',
-  color: '#f8fafc',
-  colorScheme: 'dark' as const,
-}
 
 export default function ApplyForm({ slug }: { slug: string }) {
   const router = useRouter()
@@ -56,35 +48,30 @@ export default function ApplyForm({ slug }: { slug: string }) {
 
   if (submitted) {
     return (
-      <p style={{ color: '#86efac', fontSize: '0.875rem' }}>
+      <div className="rounded-lg bg-green-500/10 border border-green-500/20 px-4 py-3 text-sm text-green-400">
         You have been added to the waitlist. Redirecting to your dashboard…
-      </p>
+      </div>
     )
   }
 
   return (
-    <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <p role="alert" style={{
-          backgroundColor: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.25)',
-          color: '#fca5a5', borderRadius: '6px', padding: '0.625rem 0.875rem',
-          fontSize: '0.875rem', margin: 0,
-        }}>
+        <div role="alert" className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
           {error}
-        </p>
+        </div>
       )}
 
       {windows.map((w, i) => (
-        <div key={i} style={{
-          backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '10px', padding: '1rem 1.25rem',
-          display: 'flex', flexDirection: 'column', gap: '0.75rem',
-        }}>
-          <div style={{ fontSize: '0.8rem', fontWeight: 600, color: '#cbd5e1' }}>
-            Time window {windows.length > 1 ? i + 1 : ''}
-          </div>
+        <div
+          key={i}
+          className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-4 space-y-3"
+        >
+          <p className="text-xs font-semibold text-slate-300">
+            Time window{windows.length > 1 ? ` ${i + 1}` : ''}
+          </p>
 
-          <div style={{ display: 'flex', gap: '0.375rem', flexWrap: 'wrap' }}>
+          <div className="flex gap-1.5 flex-wrap">
             {DAYS.map((label, day) => {
               const active = w.days.includes(day)
               return (
@@ -92,17 +79,12 @@ export default function ApplyForm({ slug }: { slug: string }) {
                   key={day}
                   type="button"
                   onClick={() => toggleDay(i, day)}
-                  style={{
-                    padding: '0.3rem 0.6rem',
-                    borderRadius: '5px',
-                    border: '1px solid',
-                    borderColor: active ? '#0ea5e9' : 'rgba(255,255,255,0.12)',
-                    backgroundColor: active ? 'rgba(14,165,233,0.15)' : 'transparent',
-                    color: active ? '#7dd3fc' : '#64748b',
-                    fontSize: '0.75rem',
-                    fontWeight: active ? 600 : 400,
-                    cursor: 'pointer',
-                  }}
+                  className={cn(
+                    'px-2.5 py-1 rounded-md border text-xs font-medium transition-colors',
+                    active
+                      ? 'border-sky-500/50 bg-sky-500/15 text-sky-300'
+                      : 'border-white/[0.12] text-slate-500 hover:text-slate-300 hover:border-white/20'
+                  )}
                 >
                   {label}
                 </button>
@@ -110,20 +92,20 @@ export default function ApplyForm({ slug }: { slug: string }) {
             })}
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>From</span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">From</span>
             <input
               type="time"
               value={w.start}
-              style={timeInputStyle}
+              className="px-2 py-1 rounded-md border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
               onChange={(e) => setWindows((prev) => prev.map((x, j) => j === i ? { ...x, start: e.target.value } : x))}
             />
-            <span style={{ fontSize: '0.8rem', color: '#64748b' }}>–</span>
-            <span style={{ fontSize: '0.8rem', color: '#94a3b8' }}>To</span>
+            <span className="text-slate-500 text-xs">–</span>
+            <span className="text-xs text-slate-400">To</span>
             <input
               type="time"
               value={w.end}
-              style={timeInputStyle}
+              className="px-2 py-1 rounded-md border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
               onChange={(e) => setWindows((prev) => prev.map((x, j) => j === i ? { ...x, end: e.target.value } : x))}
             />
           </div>
@@ -133,35 +115,14 @@ export default function ApplyForm({ slug }: { slug: string }) {
       <button
         type="button"
         onClick={() => setWindows((prev) => [...prev, { days: [], start: '09:00', end: '17:00' }])}
-        style={{
-          padding: '0.5rem',
-          backgroundColor: 'transparent',
-          border: '1px dashed rgba(255,255,255,0.15)',
-          borderRadius: '8px',
-          color: '#64748b',
-          fontSize: '0.8rem',
-          cursor: 'pointer',
-        }}
+        className="w-full py-2.5 border border-dashed border-white/[0.15] rounded-xl text-xs text-slate-500 hover:text-slate-300 hover:border-white/25 transition-colors"
       >
         + Add another time window
       </button>
 
-      <button
-        type="submit"
-        disabled={loading}
-        style={{
-          padding: '0.675rem',
-          backgroundColor: loading ? '#7dd3fc' : '#0ea5e9',
-          color: '#fff',
-          border: 'none',
-          borderRadius: '7px',
-          fontWeight: 600,
-          fontSize: '0.875rem',
-          cursor: loading ? 'default' : 'pointer',
-        }}
-      >
+      <Button type="submit" disabled={loading} className="w-full">
         {loading ? 'Joining…' : 'Join waitlist'}
-      </button>
+      </Button>
     </form>
   )
 }

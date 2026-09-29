@@ -2,7 +2,9 @@
 
 import { useState, type FormEvent } from 'react'
 import { useRouter } from 'next/navigation'
-import { inputStyle, labelStyle, pageWrapperStyle, h1Style, subtitleStyle, errorAlertStyle, hintTextStyle, colors } from '@/lib/ui/theme'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 interface CalendarOption {
   id: string
@@ -49,62 +51,111 @@ export default function ConnectSetupForm({
   }
 
   return (
-    <main style={{ ...pageWrapperStyle, maxWidth: '480px' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={h1Style}>Connect your calendar</h1>
-        <p style={subtitleStyle}>Choose which calendar holds your client bookings and fill in your business details.</p>
-      </div>
-
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-        <div>
-          <div style={{ fontSize: '0.875rem', fontWeight: 500, color: colors.textLabel, marginBottom: '0.625rem' }}>
-            Which calendar holds client bookings?
-          </div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            {calendars.map((cal) => (
-              <label key={cal.id} style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', cursor: 'pointer' }}>
-                <input type="radio" name="calendar" value={cal.id} checked={calendarChoice === cal.id} onChange={() => setCalendarChoice(cal.id)} style={{ accentColor: colors.accent, width: 'auto' }} />
-                <span style={{ fontSize: '0.875rem', color: colors.textPrimary }}>{cal.summary}</span>
-                <span style={{ fontSize: '0.75rem', color: colors.textMuted }}>{cal.timezone}</span>
-              </label>
-            ))}
-            <label style={{ display: 'flex', alignItems: 'center', gap: '0.625rem', cursor: 'pointer' }}>
-              <input type="radio" name="calendar" value="new" checked={calendarChoice === 'new'} onChange={() => setCalendarChoice('new')} style={{ accentColor: colors.accent, width: 'auto' }} />
-              <span style={{ fontSize: '0.875rem', color: colors.textPrimary }}>Create a new calendar</span>
-            </label>
-            {calendarChoice === 'new' && (
-              <input type="text" value={newCalendarName} onChange={(e) => setNewCalendarName(e.target.value)} placeholder="Calendar name" style={{ ...inputStyle, marginTop: '0.25rem' }} />
-            )}
-          </div>
+    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4 py-12">
+      <div className="w-full max-w-md">
+        <div className="mb-8">
+          <h1 className="text-2xl font-semibold text-white">Connect your calendar</h1>
+          <p className="text-sm text-slate-400 mt-1">
+            Choose which calendar holds your client bookings and fill in your business details.
+          </p>
         </div>
 
-        <label style={labelStyle}>
-          Business name
-          <input type="text" value={businessName} onChange={(e) => setBusinessName(e.target.value)} required style={inputStyle} />
-        </label>
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="space-y-2">
+              <Label>Which calendar holds client bookings?</Label>
+              <div className="space-y-2">
+                {calendars.map((cal) => (
+                  <label
+                    key={cal.id}
+                    className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                      calendarChoice === cal.id
+                        ? 'bg-blue-500/10 border-blue-500/40'
+                        : 'bg-[#0f172a] border-white/[0.08] hover:border-white/20'
+                    }`}
+                  >
+                    <input
+                      type="radio" name="calendar" value={cal.id}
+                      checked={calendarChoice === cal.id}
+                      onChange={() => setCalendarChoice(cal.id)}
+                      className="accent-blue-500"
+                    />
+                    <div>
+                      <div className="text-sm text-white font-medium">{cal.summary}</div>
+                      <div className="text-xs text-slate-500">{cal.timezone}</div>
+                    </div>
+                  </label>
+                ))}
+                <label
+                  className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
+                    calendarChoice === 'new'
+                      ? 'bg-blue-500/10 border-blue-500/40'
+                      : 'bg-[#0f172a] border-white/[0.08] hover:border-white/20'
+                  }`}
+                >
+                  <input
+                    type="radio" name="calendar" value="new"
+                    checked={calendarChoice === 'new'}
+                    onChange={() => setCalendarChoice('new')}
+                    className="accent-blue-500"
+                  />
+                  <span className="text-sm text-white">Create a new calendar</span>
+                </label>
+                {calendarChoice === 'new' && (
+                  <Input
+                    type="text" value={newCalendarName}
+                    onChange={(e) => setNewCalendarName(e.target.value)}
+                    placeholder="Calendar name"
+                    className="bg-[#0f172a] border-white/[0.12] text-white"
+                  />
+                )}
+              </div>
+            </div>
 
-        <label style={labelStyle}>
-          Business type
-          <span style={hintTextStyle}>e.g. Hair Salon, Dental Clinic</span>
-          <input type="text" name="business_type" value={businessType} onChange={(e) => setBusinessType(e.target.value)} required style={inputStyle} />
-        </label>
+            <div className="space-y-1.5">
+              <Label>Business name</Label>
+              <Input
+                type="text" value={businessName}
+                onChange={(e) => setBusinessName(e.target.value)}
+                required
+                className="bg-[#0f172a] border-white/[0.12] text-white"
+              />
+            </div>
 
-        <label style={labelStyle}>
-          WhatsApp number
-          <span style={hintTextStyle}>With country code, e.g. +15551234567</span>
-          <input type="tel" value={whatsappNumber} onChange={(e) => setWhatsappNumber(e.target.value)} required style={inputStyle} />
-        </label>
+            <div className="space-y-1.5">
+              <Label>Business type</Label>
+              <p className="text-xs text-slate-500">e.g. Hair Salon, Dental Clinic</p>
+              <Input
+                type="text" name="business_type" value={businessType}
+                onChange={(e) => setBusinessType(e.target.value)}
+                required
+                className="bg-[#0f172a] border-white/[0.12] text-white"
+              />
+            </div>
 
-        {error && <p role="alert" style={errorAlertStyle}>{error}</p>}
+            <div className="space-y-1.5">
+              <Label>WhatsApp number</Label>
+              <p className="text-xs text-slate-500">With country code, e.g. +15551234567</p>
+              <Input
+                type="tel" value={whatsappNumber}
+                onChange={(e) => setWhatsappNumber(e.target.value)}
+                required
+                className="bg-[#0f172a] border-white/[0.12] text-white"
+              />
+            </div>
 
-        <button type="submit" disabled={loading} style={{
-          padding: '0.675rem', backgroundColor: loading ? '#93c5fd' : colors.accent,
-          color: '#fff', border: 'none', borderRadius: '7px',
-          fontWeight: 600, fontSize: '0.875rem', cursor: loading ? 'default' : 'pointer',
-        }}>
-          {loading ? 'Finishing setup…' : 'Finish setup'}
-        </button>
-      </form>
+            {error && (
+              <div role="alert" className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+                {error}
+              </div>
+            )}
+
+            <Button type="submit" disabled={loading} className="w-full">
+              {loading ? 'Finishing setup…' : 'Finish setup'}
+            </Button>
+          </form>
+        </div>
+      </div>
     </main>
   )
 }

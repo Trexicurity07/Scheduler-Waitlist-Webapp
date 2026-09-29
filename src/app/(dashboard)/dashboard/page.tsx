@@ -7,48 +7,37 @@ export default async function DashboardPage() {
 
   if (!business) {
     return (
-      <main style={{ maxWidth: '900px' }}>
-        <div style={{ marginBottom: '2rem' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-            {owner.business_name}
-          </h1>
-          <p style={{ color: '#64748b', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-            Business portal · SlotFill
-          </p>
+      <main className="max-w-3xl">
+        <div className="mb-8">
+          <h1 className="text-2xl font-bold text-white m-0">{owner.business_name}</h1>
+          <p className="text-slate-500 text-sm mt-1">Business portal · SlotFill</p>
         </div>
 
-        <div style={{
-          backgroundColor: '#1e293b',
-          border: '1px solid rgba(59,130,246,0.3)',
-          borderRadius: '12px',
-          padding: '2rem',
-          maxWidth: '500px',
-          marginBottom: '1.75rem',
-        }}>
-          <h2 style={{ fontSize: '1rem', fontWeight: 600, color: '#f8fafc', margin: '0 0 0.625rem' }}>
+        <div className="bg-[#1e293b] border border-blue-500/30 rounded-xl p-8 max-w-lg mb-7">
+          <h2 className="text-base font-semibold text-white mb-2.5">
             One more step — connect your calendar
           </h2>
-          <p style={{ fontSize: '0.875rem', color: '#94a3b8', lineHeight: 1.6, margin: '0 0 1rem' }}>
+          <p className="text-sm text-slate-400 leading-relaxed mb-4">
             SlotFill monitors your Google Calendar for cancellations and automatically fills
             empty slots from your waitlist.
           </p>
-          <ul style={{ margin: '0 0 1.5rem', padding: '0 0 0 1.125rem', display: 'flex', flexDirection: 'column', gap: '0.375rem' }}>
+          <ul className="mb-6 pl-4 flex flex-col gap-1.5 list-disc">
             {[
               'Detects cancellations automatically',
               'Notifies your waitlist by WhatsApp or email',
               'Manages bookings without extra work',
             ].map((item) => (
-              <li key={item} style={{ fontSize: '0.875rem', color: '#cbd5e1' }}>{item}</li>
+              <li key={item} className="text-sm text-slate-300">{item}</li>
             ))}
           </ul>
           <CalendarSetupModal triggerLabel="Connect Google Calendar" />
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', opacity: 0.35, pointerEvents: 'none' }}>
+        <div className="grid grid-cols-3 gap-4 opacity-35 pointer-events-none">
           {['Active waitlist', 'Upcoming appointments', 'Notifications sent'].map((label) => (
-            <div key={label} style={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '1.25rem' }}>
-              <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.07em', marginBottom: '0.375rem' }}>{label}</div>
-              <div style={{ fontSize: '2rem', fontWeight: 700, color: '#64748b', lineHeight: 1 }}>—</div>
+            <div key={label} className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-5">
+              <div className="text-[11px] text-slate-500 uppercase tracking-widest mb-1.5">{label}</div>
+              <div className="text-3xl font-bold text-slate-500 leading-none">—</div>
             </div>
           ))}
         </div>
@@ -87,95 +76,65 @@ export default async function DashboardPage() {
   const calendarDisconnected = business.calendar_status === 'disconnected'
 
   return (
-    <main style={{ maxWidth: '900px' }}>
+    <main className="max-w-3xl">
       {/* Header */}
-      <div style={{ marginBottom: '1.75rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-          {business.name}
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '0.875rem', marginTop: '0.25rem' }}>
+      <div className="mb-7">
+        <h1 className="text-2xl font-bold text-white m-0">{business.name}</h1>
+        <p className="text-slate-500 text-sm mt-1">
           {business.business_type ?? 'Business'} · SlotFill dashboard
         </p>
       </div>
 
       {/* Calendar disconnected banner */}
       {calendarDisconnected && (
-        <div role="alert" style={{
-          backgroundColor: 'rgba(239,68,68,0.1)',
-          border: '1px solid rgba(239,68,68,0.25)',
-          borderRadius: '8px',
-          padding: '0.875rem 1rem',
-          marginBottom: '1.5rem',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: '1rem',
-        }}>
-          <span style={{ color: '#fca5a5', fontSize: '0.875rem' }}>
+        <div role="alert" className="flex items-center justify-between gap-4 px-4 py-3 mb-6 rounded-lg bg-red-500/10 border border-red-500/25">
+          <span className="text-red-300 text-sm">
             Your Google Calendar connection has expired — slot fills are paused.
           </span>
-          <Link href="/connect" style={{
-            padding: '0.4rem 0.875rem',
-            backgroundColor: '#dc2626',
-            color: '#fff',
-            borderRadius: '6px',
-            textDecoration: 'none',
-            fontSize: '0.8rem',
-            fontWeight: 600,
-            whiteSpace: 'nowrap',
-          }}>
+          <Link
+            href="/connect"
+            className="px-3.5 py-1.5 bg-red-600 text-white rounded-md text-xs font-semibold whitespace-nowrap hover:bg-red-500 transition-colors"
+          >
             Reconnect
           </Link>
         </div>
       )}
 
       {/* Stats row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '1.75rem' }}>
-        <StatCard label="Active waitlist" value={waitlistEntries?.length ?? 0} href="/waitlist" accent="#3b82f6" />
-        <StatCard label="Upcoming appointments" value={appointments?.length ?? 0} accent="#10b981" />
-        <StatCard label="Notifications sent" value={notifications?.length ?? 0} href="/notifications" accent="#8b5cf6" />
+      <div className="grid grid-cols-3 gap-4 mb-7">
+        <StatCard label="Active waitlist" value={waitlistEntries?.length ?? 0} href="/waitlist" accentClass="text-blue-400" />
+        <StatCard label="Upcoming appointments" value={appointments?.length ?? 0} accentClass="text-emerald-400" />
+        <StatCard label="Notifications sent" value={notifications?.length ?? 0} href="/notifications" accentClass="text-violet-400" />
       </div>
 
       {/* Main grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem', marginBottom: '1.25rem' }}>
+      <div className="grid grid-cols-2 gap-5 mb-5">
         {/* Waitlist preview */}
-        <div style={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '1.25rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.875rem' }}>
-            <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f8fafc', margin: 0 }}>
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-5">
+          <div className="flex items-center justify-between mb-3.5">
+            <h2 className="text-sm font-semibold text-white m-0">
               Waitlist ({waitlistEntries?.length ?? 0})
             </h2>
-            <Link href="/waitlist" style={{ fontSize: '0.75rem', color: '#3b82f6', textDecoration: 'none' }}>
+            <Link href="/waitlist" className="text-xs text-blue-400 hover:text-blue-300">
               {waitlistEntries?.length === 0 ? 'Add first client' : 'Manage →'}
             </Link>
           </div>
           {!waitlistEntries || waitlistEntries.length === 0 ? (
-            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
+            <p className="text-sm text-slate-500 m-0">
               No one on the waitlist yet. Add a client to get started.
             </p>
           ) : (
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0' }}>
+            <ul className="m-0 p-0 list-none flex flex-col">
               {waitlistEntries.map((entry) => {
                 const profile = (entry.clients as { client_profiles?: { name?: string; email?: string } } | null)?.client_profiles
                 return (
-                  <li key={entry.id} style={{
-                    display: 'flex', alignItems: 'center', gap: '0.625rem',
-                    padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.06)',
-                  }}>
-                    <div style={{
-                      width: '28px', height: '28px', borderRadius: '50%',
-                      backgroundColor: 'rgba(59,130,246,0.15)', color: '#93c5fd',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontSize: '0.7rem', fontWeight: 700, flexShrink: 0,
-                    }}>
+                  <li key={entry.id} className="flex items-center gap-2.5 py-2 border-b border-white/[0.06] last:border-0">
+                    <div className="w-7 h-7 rounded-full bg-blue-500/15 text-blue-300 flex items-center justify-center text-[11px] font-bold shrink-0">
                       {(profile?.name ?? '?').charAt(0).toUpperCase()}
                     </div>
                     <div>
-                      <div style={{ fontSize: '0.875rem', fontWeight: 500, color: '#f8fafc' }}>
-                        {profile?.name ?? '—'}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: '#64748b' }}>
-                        {profile?.email ?? '—'}
-                      </div>
+                      <div className="text-sm font-medium text-white">{profile?.name ?? '—'}</div>
+                      <div className="text-xs text-slate-500">{profile?.email ?? '—'}</div>
                     </div>
                   </li>
                 )
@@ -185,20 +144,18 @@ export default async function DashboardPage() {
         </div>
 
         {/* Upcoming appointments */}
-        <div style={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '1.25rem' }}>
-          <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f8fafc', margin: '0 0 0.875rem' }}>
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-5">
+          <h2 className="text-sm font-semibold text-white m-0 mb-3.5">
             Upcoming appointments ({appointments?.length ?? 0})
           </h2>
           {!appointments || appointments.length === 0 ? (
-            <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>No upcoming appointments.</p>
+            <p className="text-sm text-slate-500 m-0">No upcoming appointments.</p>
           ) : (
-            <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0' }}>
+            <ul className="m-0 p-0 list-none flex flex-col">
               {appointments.map((appt) => (
-                <li key={appt.id} style={{ padding: '0.5rem 0', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
-                  <div style={{ fontSize: '0.875rem', fontWeight: 500, color: '#f8fafc' }}>
-                    {appt.summary ?? 'Appointment'}
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: '#64748b', marginTop: '2px' }}>
+                <li key={appt.id} className="py-2 border-b border-white/[0.06] last:border-0">
+                  <div className="text-sm font-medium text-white">{appt.summary ?? 'Appointment'}</div>
+                  <div className="text-xs text-slate-500 mt-0.5">
                     {new Date(appt.start_time).toLocaleDateString(undefined, {
                       weekday: 'short', month: 'short', day: 'numeric',
                     })}{' '}
@@ -214,34 +171,31 @@ export default async function DashboardPage() {
       </div>
 
       {/* Recent notifications */}
-      <div style={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.875rem' }}>
-          <h2 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f8fafc', margin: 0 }}>Recent notifications</h2>
-          <Link href="/notifications" style={{ fontSize: '0.75rem', color: '#3b82f6', textDecoration: 'none' }}>
+      <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-5 mb-5">
+        <div className="flex items-center justify-between mb-3.5">
+          <h2 className="text-sm font-semibold text-white m-0">Recent notifications</h2>
+          <Link href="/notifications" className="text-xs text-blue-400 hover:text-blue-300">
             View all →
           </Link>
         </div>
         {!notifications || notifications.length === 0 ? (
-          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>No notifications sent yet.</p>
+          <p className="text-sm text-slate-500 m-0">No notifications sent yet.</p>
         ) : (
-          <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '0' }}>
+          <ul className="m-0 p-0 list-none flex flex-col">
             {notifications.map((n) => {
               const profile = (n.waitlist_entries as { clients?: { client_profiles?: { name?: string } } } | null)
                 ?.clients?.client_profiles
               return (
-                <li key={n.id} style={{
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                  padding: '0.625rem 0', borderBottom: '1px solid rgba(255,255,255,0.06)', gap: '1rem',
-                }}>
+                <li key={n.id} className="flex items-center justify-between py-2.5 border-b border-white/[0.06] last:border-0 gap-4">
                   <div>
-                    <span style={{ fontSize: '0.875rem', color: '#f8fafc' }}>{profile?.name ?? '—'}</span>
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', marginLeft: '0.5rem' }}>
+                    <span className="text-sm text-white">{profile?.name ?? '—'}</span>
+                    <span className="text-xs text-slate-500 ml-2">
                       {n.type === 'slot_offer' ? 'slot offer' : n.type.replace(/_/g, ' ')}
                     </span>
                   </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <div className="flex items-center gap-2">
                     <StatusBadge status={n.status} />
-                    <span style={{ fontSize: '0.75rem', color: '#64748b', whiteSpace: 'nowrap' }}>
+                    <span className="text-xs text-slate-500 whitespace-nowrap">
                       {new Date(n.sent_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
                     </span>
                   </div>
@@ -253,7 +207,7 @@ export default async function DashboardPage() {
       </div>
 
       {/* Quick links */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '1rem' }}>
+      <div className="grid grid-cols-2 gap-4">
         <QuickLink
           href="/waitlist"
           title="Manage waitlist"
@@ -269,31 +223,28 @@ export default async function DashboardPage() {
   )
 }
 
-function StatCard({ label, value, href, accent }: { label: string; value: number; href?: string; accent: string }) {
+function StatCard({ label, value, href, accentClass }: { label: string; value: number; href?: string; accentClass: string }) {
   const inner = (
-    <div style={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', padding: '1.25rem' }}>
-      <div style={{ fontSize: '0.7rem', color: '#64748b', textTransform: 'uppercase' as const, letterSpacing: '0.07em', marginBottom: '0.375rem' }}>
-        {label}
-      </div>
-      <div style={{ fontSize: '2rem', fontWeight: 700, color: accent, lineHeight: 1 }}>{value}</div>
+    <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-5">
+      <div className="text-[11px] text-slate-500 uppercase tracking-widest mb-1.5">{label}</div>
+      <div className={`text-3xl font-bold leading-none ${accentClass}`}>{value}</div>
     </div>
   )
-  return href ? <Link href={href} style={{ textDecoration: 'none' }}>{inner}</Link> : inner
+  return href ? (
+    <Link href={href} className="no-underline block hover:opacity-80 transition-opacity">{inner}</Link>
+  ) : inner
 }
 
 function StatusBadge({ status }: { status: string }) {
-  const map: Record<string, { bg: string; color: string }> = {
-    sent: { bg: 'rgba(59,130,246,0.15)', color: '#93c5fd' },
-    confirmed: { bg: 'rgba(34,197,94,0.15)', color: '#86efac' },
-    declined: { bg: 'rgba(239,68,68,0.15)', color: '#fca5a5' },
-    expired: { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8' },
+  const classes: Record<string, string> = {
+    sent: 'bg-blue-500/15 text-blue-300',
+    confirmed: 'bg-green-500/15 text-green-300',
+    declined: 'bg-red-500/15 text-red-300',
+    expired: 'bg-slate-700/60 text-slate-400',
   }
-  const s = map[status] ?? { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8' }
+  const cls = classes[status] ?? classes.expired
   return (
-    <span style={{
-      fontSize: '0.7rem', fontWeight: 600, padding: '0.2rem 0.5rem',
-      borderRadius: '4px', backgroundColor: s.bg, color: s.color, textTransform: 'capitalize' as const,
-    }}>
+    <span className={`text-[11px] font-semibold px-2 py-0.5 rounded capitalize ${cls}`}>
       {status}
     </span>
   )
@@ -301,14 +252,12 @@ function StatusBadge({ status }: { status: string }) {
 
 function QuickLink({ href, title, description }: { href: string; title: string; description: string }) {
   return (
-    <Link href={href} style={{
-      display: 'block', backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)',
-      borderRadius: '10px', padding: '1.25rem', textDecoration: 'none',
-    }}>
-      <div style={{ fontSize: '0.9rem', fontWeight: 600, color: '#f8fafc', marginBottom: '0.375rem' }}>
-        {title} →
-      </div>
-      <div style={{ fontSize: '0.8rem', color: '#64748b', lineHeight: 1.5 }}>{description}</div>
+    <Link
+      href={href}
+      className="block bg-[#1e293b] border border-white/[0.08] rounded-xl p-5 no-underline hover:border-white/[0.15] transition-colors"
+    >
+      <div className="text-sm font-semibold text-white mb-1.5">{title} →</div>
+      <div className="text-xs text-slate-500 leading-relaxed">{description}</div>
     </Link>
   )
 }

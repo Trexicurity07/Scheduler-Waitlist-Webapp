@@ -18,17 +18,7 @@ export function RemoveEntryButton({ entryId }: { entryId: string }) {
     <button
       onClick={handleRemove}
       disabled={pending}
-      style={{
-        padding: '0.3rem 0.7rem',
-        backgroundColor: 'transparent',
-        border: '1px solid rgba(239,68,68,0.3)',
-        borderRadius: '5px',
-        color: pending ? '#64748b' : '#f87171',
-        fontSize: '0.75rem',
-        fontWeight: 500,
-        cursor: pending ? 'default' : 'pointer',
-        flexShrink: 0,
-      }}
+      className="px-2.5 py-1 text-xs font-medium rounded-md border border-red-500/30 text-red-400 hover:border-red-500/50 hover:text-red-300 disabled:text-slate-500 disabled:border-slate-700 disabled:cursor-default transition-colors bg-transparent cursor-pointer shrink-0"
     >
       {pending ? 'Removing…' : 'Remove'}
     </button>

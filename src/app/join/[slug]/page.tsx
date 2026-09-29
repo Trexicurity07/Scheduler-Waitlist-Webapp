@@ -13,46 +13,33 @@ export default async function JoinPage({ params }: { params: Promise<{ slug: str
 
   if (!business) {
     return (
-      <main style={{ maxWidth: '480px', margin: '6rem auto', padding: '0 1.5rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: '0 0 0.5rem' }}>
-          Business not found
-        </h1>
-        <p style={{ color: '#94a3b8', fontSize: '0.875rem' }}>
-          This waitlist link is no longer active.
-        </p>
+      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+        <div className="w-full max-w-md text-center">
+          <h1 className="text-xl font-semibold text-white mb-2">Business not found</h1>
+          <p className="text-sm text-slate-400">This waitlist link is no longer active.</p>
+        </div>
       </main>
     )
   }
 
   return (
-    <main style={{ maxWidth: '480px', margin: '4rem auto', padding: '0 1.5rem' }}>
-      <div style={{ marginBottom: '2rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: '0 0 0.375rem' }}>
-          Join the waitlist
-        </h1>
-        <p style={{ fontSize: '1rem', fontWeight: 600, color: '#cbd5e1', margin: '0 0 0.25rem' }}>
-          {business.name}
-        </p>
-        {business.business_type && (
-          <p style={{ fontSize: '0.875rem', color: '#64748b', margin: 0 }}>
-            {business.business_type}
-          </p>
-        )}
-      </div>
+    <main className="min-h-screen bg-[#0f172a] py-12 px-4">
+      <div className="max-w-lg mx-auto">
+        <div className="mb-6">
+          <h1 className="text-2xl font-bold text-white mb-1">Join the waitlist</h1>
+          <p className="text-base font-semibold text-slate-300">{business.name}</p>
+          {business.business_type && (
+            <p className="text-sm text-slate-500">{business.business_type}</p>
+          )}
+        </div>
 
-      <div style={{
-        backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)',
-        borderRadius: '10px', padding: '1.25rem', marginBottom: '1.25rem',
-      }}>
-        <p style={{ fontSize: '0.875rem', color: '#94a3b8', margin: '0 0 0.25rem' }}>
-          Applying as
-        </p>
-        <p style={{ fontSize: '0.875rem', color: '#f8fafc', margin: 0, fontWeight: 500 }}>
-          {profile.name} · {profile.email}
-        </p>
-      </div>
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-4 mb-5">
+          <p className="text-xs text-slate-500 mb-1">Applying as</p>
+          <p className="text-sm text-white font-medium">{profile.name} · {profile.email}</p>
+        </div>
 
-      <ApplyForm slug={slug} />
+        <ApplyForm slug={slug} />
+      </div>
     </main>
   )
 }

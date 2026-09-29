@@ -9,12 +9,20 @@ const TYPE_LABELS: Record<string, string> = {
   email_verification: 'Email verification',
 }
 
-const STATUS_COLORS: Record<string, { bg: string; color: string }> = {
-  sent: { bg: 'rgba(59,130,246,0.15)', color: '#93c5fd' },
-  confirmed: { bg: 'rgba(34,197,94,0.15)', color: '#86efac' },
-  declined: { bg: 'rgba(239,68,68,0.15)', color: '#fca5a5' },
-  expired: { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8' },
-  superseded: { bg: 'rgba(100,116,139,0.15)', color: '#94a3b8' },
+function StatusBadge({ status }: { status: string }) {
+  const classes: Record<string, string> = {
+    sent: 'bg-blue-500/15 text-blue-300',
+    confirmed: 'bg-green-500/15 text-green-300',
+    declined: 'bg-red-500/15 text-red-300',
+    expired: 'bg-slate-700/60 text-slate-400',
+    superseded: 'bg-slate-700/60 text-slate-400',
+  }
+  const cls = classes[status] ?? classes.expired
+  return (
+    <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold capitalize ${cls}`}>
+      {status}
+    </span>
+  )
 }
 
 export default async function NotificationsPage() {
@@ -22,16 +30,13 @@ export default async function NotificationsPage() {
 
   if (!business) {
     return (
-      <main style={{ maxWidth: '860px' }}>
-        <div style={{ marginBottom: '1.75rem' }}>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>Notification history</h1>
-          <p style={{ color: '#64748b', fontSize: '0.875rem', marginTop: '0.25rem' }}>{owner.business_name}</p>
+      <main className="max-w-3xl">
+        <div className="mb-7">
+          <h1 className="text-2xl font-bold text-white m-0">Notification history</h1>
+          <p className="text-slate-500 text-sm mt-1">{owner.business_name}</p>
         </div>
-        <div style={{
-          backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)',
-          borderRadius: '10px', padding: '2rem', textAlign: 'center' as const,
-        }}>
-          <p style={{ color: '#64748b', fontSize: '0.875rem', margin: '0 0 1rem' }}>
+        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-8 text-center">
+          <p className="text-slate-500 text-sm mb-4">
             Connect your Google Calendar to start receiving slot fill notifications.
           </p>
           <CalendarSetupModal defaultOpen={true} triggerLabel="Connect Google Calendar" />
@@ -48,29 +53,23 @@ export default async function NotificationsPage() {
     .limit(50)
 
   return (
-    <main style={{ maxWidth: '860px' }}>
-      <div style={{ marginBottom: '1.75rem' }}>
-        <h1 style={{ fontSize: '1.5rem', fontWeight: 700, color: '#f8fafc', margin: 0 }}>
-          Notification history
-        </h1>
-        <p style={{ color: '#64748b', fontSize: '0.875rem', marginTop: '0.25rem' }}>
-          {business.name}
-        </p>
+    <main className="max-w-3xl">
+      <div className="mb-7">
+        <h1 className="text-2xl font-bold text-white m-0">Notification history</h1>
+        <p className="text-slate-500 text-sm mt-1">{business.name}</p>
       </div>
 
       {!notifications || notifications.length === 0 ? (
-        <p style={{ color: '#64748b' }}>No notifications sent yet.</p>
+        <p className="text-slate-500">No notifications sent yet.</p>
       ) : (
-        <div style={{ backgroundColor: '#1e293b', border: '1px solid rgba(255,255,255,0.08)', borderRadius: '10px', overflow: 'hidden' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.875rem' }}>
-            <thead>
-              <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
+        <div className="rounded-xl border border-white/[0.08] overflow-hidden">
+          <table className="w-full text-sm">
+            <thead className="bg-white/[0.02]">
+              <tr className="border-b border-white/[0.08]">
                 {['Client', 'Type', 'Status', 'Sent', 'Responded'].map((h) => (
-                  <th key={h} style={{
-                    padding: '0.75rem 1rem', textAlign: 'left' as const,
-                    fontSize: '0.75rem', fontWeight: 600, color: '#64748b',
-                    textTransform: 'uppercase' as const, letterSpacing: '0.05em',
-                  }}>{h}</th>
+                  <th key={h} className="text-left px-4 py-3 text-xs font-semibold text-slate-500 uppercase tracking-wide">
+                    {h}
+                  </th>
                 ))}
               </tr>
             </thead>
@@ -78,30 +77,24 @@ export default async function NotificationsPage() {
               {notifications.map((notification, idx) => {
                 const clientProfile = (notification.waitlist_entries?.clients as { client_profiles?: { name?: string } } | null)
                   ?.client_profiles
-                const s = STATUS_COLORS[notification.status] ?? STATUS_COLORS.expired
                 return (
-                  <tr key={notification.id} style={{
-                    borderBottom: idx < notifications.length - 1 ? '1px solid rgba(255,255,255,0.06)' : 'none',
-                  }}>
-                    <td style={{ padding: '0.75rem 1rem', color: '#f8fafc', fontWeight: 500 }}>
+                  <tr
+                    key={notification.id}
+                    className={idx < notifications.length - 1 ? 'border-b border-white/[0.06]' : ''}
+                  >
+                    <td className="px-4 py-3 text-white font-medium">
                       {clientProfile?.name ?? '—'}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#94a3b8' }}>
+                    <td className="px-4 py-3 text-slate-400">
                       {TYPE_LABELS[notification.type] ?? notification.type}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem' }}>
-                      <span style={{
-                        fontSize: '0.75rem', fontWeight: 600, padding: '0.2rem 0.5rem',
-                        borderRadius: '4px', backgroundColor: s.bg, color: s.color,
-                        textTransform: 'capitalize' as const,
-                      }}>
-                        {notification.status}
-                      </span>
+                    <td className="px-4 py-3">
+                      <StatusBadge status={notification.status} />
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#64748b', whiteSpace: 'nowrap' as const }}>
+                    <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
                       {new Date(notification.sent_at).toLocaleString()}
                     </td>
-                    <td style={{ padding: '0.75rem 1rem', color: '#64748b', whiteSpace: 'nowrap' as const }}>
+                    <td className="px-4 py-3 text-slate-500 whitespace-nowrap">
                       {notification.responded_at ? new Date(notification.responded_at).toLocaleString() : '—'}
                     </td>
                   </tr>

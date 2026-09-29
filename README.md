@@ -29,6 +29,9 @@ Password: Demo1234!
 
 The demo business has Google Calendar sync disabled, so nothing auto-fires. But all the UI is fully functional — you can add/remove waitlist entries, view pending offers, and walk through the confirm/decline flow.
 
+> [!WARNING]
+> **The demo works without Google OAuth or Resend configured.** Without Google OAuth, connecting a new business to Google Calendar will fail — the demo account is pre-set to `disconnected` so this doesn't affect it. Without Resend, slot offer emails won't send — the confirm/decline page still works if navigated to directly. For a UI walkthrough these limitations are invisible.
+
 ---
 
 ## How it works

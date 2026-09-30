@@ -22,7 +22,7 @@ export default function AboutPage() {
           We&apos;re building the scheduling layer businesses deserve
         </h1>
         <p className="text-lg leading-relaxed text-slate-400">
-          SlotFill started with a simple observation: every service business loses revenue to last-minute cancellations, and every one of them has a list of clients who would happily take that slot — if only someone told them in time. We built the software that does exactly that.
+          [Company description placeholder — replace with your actual company story and founding mission before going live.]
         </p>
       </section>
 
@@ -60,10 +60,10 @@ export default function AboutPage() {
         <h2 className="mb-8 text-xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>The team</h2>
         <div className="grid gap-5 sm:grid-cols-4">
           {[
-            { name: 'Alex Rivera', role: 'Co-founder & CEO' },
-            { name: 'Jordan Kim', role: 'Co-founder & CTO' },
-            { name: 'Sam Okafor', role: 'Head of Product' },
-            { name: 'Casey Lin', role: 'Lead Engineer' },
+            { name: '[Founder Name]', role: 'Co-founder & CEO' },
+            { name: '[Founder Name]', role: 'Co-founder & CTO' },
+            { name: '[Team Member]', role: 'Head of Product' },
+            { name: '[Team Member]', role: 'Lead Engineer' },
           ].map(p => (
             <Card key={p.name} className="border-white/[0.07] bg-[#1e293b]">
               <CardContent className="p-5">

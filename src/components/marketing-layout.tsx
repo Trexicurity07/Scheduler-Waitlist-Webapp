@@ -35,16 +35,16 @@ export default function MarketingLayout({ children }: { children: React.ReactNod
 
           <div>
             <div className="mb-3.5 text-xs font-semibold uppercase tracking-widest text-slate-400">Contact</div>
-            <p className="mb-1.5 text-sm text-slate-500">hello@slotfill.io</p>
-            <p className="mb-1.5 text-sm text-slate-500">+1 (555) 018-2400</p>
+            <p className="mb-1.5 text-sm text-slate-500">hello@example.com</p>
+            <p className="mb-1.5 text-sm text-slate-500">+1 (555) 000-0000</p>
             <p className="text-sm leading-relaxed text-slate-500">
-              240 Kent Avenue, Suite 4B<br />Brooklyn, NY 11249
+              123 Placeholder Street<br />Demo City, DC 00000
             </p>
           </div>
         </div>
 
         <div className="mx-auto mt-10 flex max-w-6xl items-center justify-between border-t border-white/[0.06] pt-6">
-          <span className="text-xs text-slate-600">© 2026 SlotFill Inc. All rights reserved.</span>
+          <span className="text-xs text-slate-600">© 2026 [Company Name] — Demo build</span>
           <span className="text-xs text-slate-600">Made for service businesses everywhere.</span>
         </div>
       </footer>

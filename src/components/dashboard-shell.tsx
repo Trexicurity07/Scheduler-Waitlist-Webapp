@@ -31,7 +31,7 @@ export function DashboardShell({ children, tree }: Props) {
 
   // On the waitlist management page — no sidebar
   if (pathname === '/waitlist') {
-    return <div style={{ flex: 1, minWidth: 0 }}>{children}</div>
+    return <div style={{ flex: 1, minWidth: 0, padding: '28px 32px' }}>{children}</div>
   }
 
   return (
@@ -90,9 +90,9 @@ export function DashboardShell({ children, tree }: Props) {
           →
         </button>
       )}
-      <main style={{ flex: 1, minWidth: 0, overflow: 'auto' }}>
+      <div style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: '28px 32px' }}>
         {children}
-      </main>
+      </div>
     </div>
   )
 }

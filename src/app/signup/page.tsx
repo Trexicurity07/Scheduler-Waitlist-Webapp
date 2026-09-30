@@ -54,6 +54,7 @@ function SignupPageContent() {
   const [cardCvv, setCardCvv] = useState('')
   const [payError, setPayError] = useState<string | null>(null)
   const [payLoading, setPayLoading] = useState(false)
+  const [demoSuccess, setDemoSuccess] = useState(false)
 
   const selectedPlan = PLANS.find(p => p.key === plan)!
 
@@ -98,20 +99,34 @@ function SignupPageContent() {
 
   async function handlePayment(event: FormEvent) {
     event.preventDefault()
-    setPayError(null)
-    setPayLoading(true)
-    const response = await fetch('/api/signup/complete-payment', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ paymentSession }),
-    })
-    const body = await response.json()
-    setPayLoading(false)
-    if (!response.ok || !body.ok) { setPayError(body.error ?? 'Payment failed. Please try again.'); return }
-    router.push('/about')
+    setDemoSuccess(true)
   }
 
   if (step === 'payment') {
+    if (demoSuccess) {
+      return (
+        <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
+          <div className="w-full max-w-sm text-center">
+            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-500/15 border border-green-500/30 mb-5">
+              <span className="text-green-400 text-2xl">✓</span>
+            </div>
+            <h1 className="text-xl font-semibold text-white mb-2">
+              You&apos;re on {selectedPlan.label}
+            </h1>
+            <p className="text-sm text-slate-400 mb-1">
+              Your account has been moved to the {selectedPlan.label} tier.
+            </p>
+            <p className="text-xs text-amber-400/80 mb-7">
+              Demo build — no charges apply.
+            </p>
+            <Button asChild className="w-full">
+              <Link href="/dashboard">Go to dashboard</Link>
+            </Button>
+          </div>
+        </main>
+      )
+    }
+
     return (
       <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
         <div className="w-full max-w-sm">
@@ -189,7 +204,7 @@ function SignupPageContent() {
         </div>
       </main>
     )
-  }
+  } // end step === 'payment'
 
   if (step === 'verify') {
     return (

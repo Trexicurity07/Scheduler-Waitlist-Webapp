@@ -127,7 +127,6 @@ export default function HomePage() {
 
         {/* Background layer */}
         <div className="pointer-events-none absolute inset-0">
-          {/* Dot grid */}
           <div
             className="absolute inset-0"
             style={{
@@ -135,21 +134,19 @@ export default function HomePage() {
               backgroundSize: '28px 28px',
             }}
           />
-          {/* Indigo orb — top-left */}
           <div
             className="absolute -top-32 left-1/4 h-[560px] w-[560px] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
             style={{ background: 'radial-gradient(circle, #818cf8, transparent 70%)' }}
           />
-          {/* Cyan orb — top-right */}
           <div
             className="absolute -top-20 right-1/4 h-[440px] w-[440px] translate-x-1/2 rounded-full opacity-20 blur-3xl"
             style={{ background: 'radial-gradient(circle, #22d3ee, transparent 70%)' }}
           />
         </div>
 
+        {/* Hero content — inner div is centered, text-center flows down */}
         <div className="relative mx-auto max-w-4xl px-6 py-32 text-center md:py-44">
 
-          {/* Badge */}
           <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-4 py-1.5">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
             <span className="text-xs font-semibold tracking-widest text-blue-300">
@@ -157,7 +154,6 @@ export default function HomePage() {
             </span>
           </div>
 
-          {/* Headline */}
           <h1
             className="mb-6 text-5xl font-extrabold tracking-tight text-white md:text-7xl"
             style={{ lineHeight: 1.05 }}
@@ -179,8 +175,7 @@ export default function HomePage() {
             SlotFill automatically fills open calendar slots from your waitlist — keeping your schedule full without the manual follow-up.
           </p>
 
-          {/* CTAs */}
-          <div className="mb-16 flex flex-wrap justify-center gap-3">
+          <div className="mb-16 flex flex-wrap justify-center gap-4">
             <Button asChild size="lg" className="h-12 px-7 text-[0.9375rem]">
               <Link href="/signup">Get started free →</Link>
             </Button>
@@ -194,10 +189,10 @@ export default function HomePage() {
             {stats.map((s, i) => (
               <div
                 key={s.label}
-                className={`px-4 py-5 text-center${i > 0 ? ' border-l border-white/[0.07]' : ''}`}
+                className={`px-6 py-6 text-center${i > 0 ? ' border-l border-white/[0.07]' : ''}`}
               >
-                <div className="mb-1 text-xl font-bold tracking-tight text-white">{s.value}</div>
-                <div className="text-[11px] leading-snug text-slate-500">{s.label}</div>
+                <div className="mb-1.5 text-2xl font-bold tracking-tight text-white">{s.value}</div>
+                <div className="text-xs leading-snug text-slate-500">{s.label}</div>
               </div>
             ))}
           </div>
@@ -206,105 +201,113 @@ export default function HomePage() {
       </section>
 
       {/* ── Social proof strip ───────────────────────────────────────── */}
-      <div className="border-y border-white/[0.06] bg-white/[0.015] py-4">
+      <div className="border-y border-white/[0.06] bg-white/[0.015] py-5">
         <p className="text-center text-xs font-medium uppercase tracking-widest text-slate-600">
           Trusted by service professionals across 40+ industries
         </p>
       </div>
 
       {/* ── How it works ─────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-6 py-24">
+      {/*
+        Pattern: section = full-width container (handles vertical rhythm)
+                 inner div = mx-auto max-w-5xl (handles centering)
+      */}
+      <section className="py-24">
+        <div className="mx-auto max-w-5xl px-6">
 
-        <div className="mb-16 text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-blue-400">How it works</p>
-          <h2 className="text-3xl font-extrabold tracking-tight text-white">
-            Up and running in 5 minutes
-          </h2>
-        </div>
+          <div className="mb-16 text-center">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-blue-400">How it works</p>
+            <h2 className="text-3xl font-extrabold tracking-tight text-white">
+              Up and running in 5 minutes
+            </h2>
+          </div>
 
-        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
-          {steps.map((step, i) => (
-            <div
-              key={step.n}
-              className="relative rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#151e30] to-[#111827] p-7"
-            >
-              {/* Dashed connector to next card (desktop only) */}
-              {i < steps.length - 1 && (
-                <div className="absolute right-0 top-10 hidden w-6 translate-x-full border-t border-dashed border-white/[0.12] md:block" />
-              )}
+          <div className="grid gap-6 md:grid-cols-3">
+            {steps.map((step, i) => (
               <div
-                className="mb-5 text-4xl font-extrabold tracking-tight"
-                style={{
-                  background: 'linear-gradient(135deg, #818cf8, #60a5fa)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent',
-                  backgroundClip: 'text',
-                }}
+                key={step.n}
+                className="relative rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#151e30] to-[#111827] p-8"
               >
-                {step.n}
+                {i < steps.length - 1 && (
+                  <div className="absolute right-0 top-10 hidden w-6 translate-x-full border-t border-dashed border-white/[0.12] md:block" />
+                )}
+                <div
+                  className="mb-6 text-4xl font-extrabold tracking-tight"
+                  style={{
+                    background: 'linear-gradient(135deg, #818cf8, #60a5fa)',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                  }}
+                >
+                  {step.n}
+                </div>
+                <h3 className="mb-3 text-sm font-semibold text-white">{step.title}</h3>
+                <p className="text-sm leading-relaxed text-slate-500">{step.desc}</p>
               </div>
-              <h3 className="mb-2.5 text-sm font-semibold text-white">{step.title}</h3>
-              <p className="text-sm leading-relaxed text-slate-500">{step.desc}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
+        </div>
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-6 pb-24">
+      <section className="py-24">
+        <div className="mx-auto max-w-5xl px-6">
 
-        <div className="mb-16 text-center">
-          <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-blue-400">Features</p>
-          <h2 className="text-3xl font-extrabold tracking-tight text-white">
-            Built for busy service businesses
-          </h2>
-        </div>
+          <div className="mb-16 text-center">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-blue-400">Features</p>
+            <h2 className="text-3xl font-extrabold tracking-tight text-white">
+              Built for busy service businesses
+            </h2>
+          </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {features.map(({ Icon, title, desc }) => (
-            <div
-              key={title}
-              className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-500/20 hover:bg-white/[0.04]"
-            >
-              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/20 bg-gradient-to-br from-blue-500/15 to-indigo-500/10 text-blue-400">
-                <Icon />
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {features.map(({ Icon, title, desc }) => (
+              <div
+                key={title}
+                className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-7 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-500/20 hover:bg-white/[0.04]"
+              >
+                <div className="mb-5 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/20 bg-gradient-to-br from-blue-500/15 to-indigo-500/10 text-blue-400">
+                  <Icon />
+                </div>
+                <h3 className="mb-3 text-sm font-semibold text-white">{title}</h3>
+                <p className="text-sm leading-relaxed text-slate-500">{desc}</p>
               </div>
-              <h3 className="mb-2 text-sm font-semibold text-white">{title}</h3>
-              <p className="text-sm leading-relaxed text-slate-500">{desc}</p>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
 
+        </div>
       </section>
 
       {/* ── Final CTA ────────────────────────────────────────────────── */}
-      <section className="mx-auto max-w-5xl px-6 pb-28">
-        <div
-          className="relative overflow-hidden rounded-3xl p-px"
-          style={{
-            background: 'linear-gradient(135deg, rgba(99,102,241,0.5), rgba(59,130,246,0.3), rgba(52,211,153,0.3))',
-          }}
-        >
-          <div className="relative overflow-hidden rounded-[23px] bg-[#0c1221] px-10 py-16 text-center md:px-20">
-            {/* Ambient glow */}
-            <div
-              className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-[500px] -translate-x-1/2 -translate-y-1/2 opacity-60"
-              style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.18), transparent 70%)' }}
-            />
-            <h2 className="relative mb-3 text-3xl font-extrabold tracking-tight text-white">
-              Stop leaving empty slots on the table
-            </h2>
-            <p className="relative mb-8 text-sm text-slate-400">
-              Free forever on the Starter plan. No credit card required.
-            </p>
-            <div className="relative flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" className="h-12 px-7 text-[0.9375rem]">
-                <Link href="/signup">Create your free account →</Link>
-              </Button>
-              <Button asChild size="lg" variant="ghost" className="h-12 px-7 text-[0.9375rem] text-slate-300 hover:text-white">
-                <Link href="/pricing">See pricing</Link>
-              </Button>
+      <section className="py-20 pb-28">
+        <div className="mx-auto max-w-5xl px-6">
+          <div
+            className="relative overflow-hidden rounded-3xl p-px"
+            style={{
+              background: 'linear-gradient(135deg, rgba(99,102,241,0.5), rgba(59,130,246,0.3), rgba(52,211,153,0.3))',
+            }}
+          >
+            <div className="relative overflow-hidden rounded-[23px] bg-[#0c1221] px-10 py-16 text-center md:px-20">
+              <div
+                className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-[500px] -translate-x-1/2 -translate-y-1/2 opacity-60"
+                style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.18), transparent 70%)' }}
+              />
+              <h2 className="relative mb-4 text-3xl font-extrabold tracking-tight text-white">
+                Stop leaving empty slots on the table
+              </h2>
+              <p className="relative mb-8 text-sm text-slate-400">
+                Free forever on the Starter plan. No credit card required.
+              </p>
+              <div className="relative flex flex-wrap justify-center gap-4">
+                <Button asChild size="lg" className="h-12 px-7 text-[0.9375rem]">
+                  <Link href="/signup">Create your free account →</Link>
+                </Button>
+                <Button asChild size="lg" variant="ghost" className="h-12 px-7 text-[0.9375rem] text-slate-300 hover:text-white">
+                  <Link href="/pricing">See pricing</Link>
+                </Button>
+              </div>
             </div>
           </div>
         </div>

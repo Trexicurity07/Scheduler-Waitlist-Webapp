@@ -53,17 +53,33 @@ function ClientLoginForm() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
-      <div className="w-full max-w-sm">
+    <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-10">
+      <div className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(rgba(148,163,184,0.05) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+          }}
+        />
+        <div
+          className="absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #22d3ee, transparent 70%)' }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
-            <span className="text-blue-400 font-bold text-lg">S</span>
+          <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-sky-500/20 bg-sky-500/10">
+            <span className="text-lg font-bold text-sky-400">S</span>
           </div>
-          <h1 className="text-xl font-semibold text-white">Client login</h1>
-          <p className="text-sm text-slate-400 mt-1">Sign in to view your waitlists and slot offers.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+            Client login
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-400">Sign in to view your waitlists and slot offers.</p>
         </div>
 
-        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="identifier">Email, phone, or name</Label>
@@ -76,6 +92,7 @@ function ClientLoginForm() {
                 autoComplete="username"
                 placeholder="Email, phone, or your name"
                 maxLength={254}
+                className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-500"
               />
               {error && errorField === 'identifier' && <FieldError message={error} />}
             </div>
@@ -90,7 +107,7 @@ function ClientLoginForm() {
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
                   required
                   autoComplete="current-password"
-                  className="pr-16"
+                  className="bg-[#0f172a] border-white/[0.12] text-white pr-16"
                 />
                 <button
                   type="button"
@@ -104,7 +121,10 @@ function ClientLoginForm() {
             </div>
 
             <div className="text-right -mt-1">
-              <Link href="/client/forgot-password" className="text-xs text-slate-500 hover:text-slate-300 transition-colors">
+              <Link
+                href="/client/forgot-password"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors"
+              >
                 Forgot password?
               </Link>
             </div>

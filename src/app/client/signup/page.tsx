@@ -61,21 +61,38 @@ export default function ClientSignupPage() {
 
   if (step === 'verify') {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
-        <div className="w-full max-w-sm">
-          <div className="mb-8 text-center">
+      <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-10">
+        <div className="pointer-events-none absolute inset-0">
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: 'radial-gradient(rgba(148,163,184,0.05) 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
+            }}
+          />
+          <div
+            className="absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #22d3ee, transparent 70%)' }}
+          />
+        </div>
+
+        <div className="relative z-10 w-full max-w-sm">
+          <div className="mb-6 text-center">
             <button
               onClick={() => setStep('form')}
-              className="text-xs text-slate-500 hover:text-slate-300 transition-colors mb-4 block mx-auto"
+              className="mb-4 block mx-auto text-xs text-slate-500 hover:text-slate-300 transition-colors"
             >
               ← Back
             </button>
-            <h1 className="text-xl font-semibold text-white">Check your email</h1>
-            <p className="text-sm text-slate-400 mt-1">
+            <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+              Check your email
+            </h1>
+            <p className="mt-1.5 text-sm text-slate-400">
               We sent a 6-digit code to <strong className="text-white">{pendingEmail}</strong>. It expires in 15 minutes.
             </p>
           </div>
-          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm">
             <form onSubmit={handleVerify} className="space-y-4">
               <div className="space-y-1.5">
                 <Label htmlFor="code">Verification code</Label>
@@ -89,7 +106,7 @@ export default function ClientSignupPage() {
                   required
                   autoComplete="one-time-code"
                   placeholder="000000"
-                  className="text-xl tracking-[0.25em] text-center font-mono"
+                  className="bg-[#0f172a] border-white/[0.12] text-white text-xl tracking-[0.25em] text-center font-mono placeholder:text-slate-600"
                   autoFocus
                 />
                 {verifyError && <FieldError message={verifyError} />}
@@ -99,6 +116,7 @@ export default function ClientSignupPage() {
               </Button>
             </form>
           </div>
+
           <p className="mt-4 text-xs text-slate-500 text-center">
             Didn&apos;t receive it?{' '}
             <button
@@ -114,17 +132,33 @@ export default function ClientSignupPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4 py-12">
-      <div className="w-full max-w-sm">
+    <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-12">
+      <div className="pointer-events-none absolute inset-0">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: 'radial-gradient(rgba(148,163,184,0.05) 1px, transparent 1px)',
+            backgroundSize: '28px 28px',
+          }}
+        />
+        <div
+          className="absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
+          style={{ background: 'radial-gradient(circle, #22d3ee, transparent 70%)' }}
+        />
+      </div>
+
+      <div className="relative z-10 w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
-            <span className="text-blue-400 font-bold text-lg">S</span>
+          <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-sky-500/20 bg-sky-500/10">
+            <span className="text-lg font-bold text-sky-400">S</span>
           </div>
-          <h1 className="text-xl font-semibold text-white">Create a client account</h1>
-          <p className="text-sm text-slate-400 mt-1">Get notified when a cancellation slot opens up.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+            Create a client account
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-400">Get notified when a cancellation slot opens up.</p>
         </div>
 
-        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-1.5">
               <Label htmlFor="name">Full name</Label>
@@ -136,6 +170,7 @@ export default function ClientSignupPage() {
                 required
                 autoComplete="name"
                 maxLength={60}
+                className="bg-[#0f172a] border-white/[0.12] text-white"
               />
               {error && errorField === 'name' && <FieldError message={error} />}
             </div>
@@ -150,6 +185,7 @@ export default function ClientSignupPage() {
                 required
                 autoComplete="email"
                 maxLength={254}
+                className="bg-[#0f172a] border-white/[0.12] text-white"
               />
               {error && errorField === 'email' && <FieldError message={error} />}
             </div>
@@ -157,7 +193,7 @@ export default function ClientSignupPage() {
             <div className="space-y-1.5">
               <Label htmlFor="phone">
                 Phone
-                <span className="text-xs text-slate-500 font-normal ml-1">e.g. +15551234567</span>
+                <span className="ml-1 text-xs font-normal text-slate-500">e.g. +15551234567</span>
               </Label>
               <Input
                 id="phone"
@@ -173,6 +209,7 @@ export default function ClientSignupPage() {
                 autoComplete="tel"
                 placeholder="+15551234567"
                 maxLength={16}
+                className="bg-[#0f172a] border-white/[0.12] text-white placeholder:text-slate-600"
               />
               {error && errorField === 'phone' && <FieldError message={error} />}
             </div>
@@ -180,7 +217,7 @@ export default function ClientSignupPage() {
             <div className="space-y-1.5">
               <Label htmlFor="password">
                 Password
-                <span className="text-xs text-slate-500 font-normal ml-1">8–72 chars, upper &amp; lower, digit, no spaces</span>
+                <span className="ml-1 text-xs font-normal text-slate-500">8–72 chars, upper &amp; lower, digit, no spaces</span>
               </Label>
               <div className="relative">
                 <Input
@@ -191,7 +228,7 @@ export default function ClientSignupPage() {
                   required
                   minLength={8}
                   autoComplete="new-password"
-                  className="pr-16"
+                  className="bg-[#0f172a] border-white/[0.12] text-white pr-16"
                 />
                 <button
                   type="button"

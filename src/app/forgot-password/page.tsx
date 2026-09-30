@@ -14,6 +14,24 @@ function detectConfirmField(msg: string): 'password' | 'code' {
   return 'password'
 }
 
+function PageBg() {
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'radial-gradient(rgba(148,163,184,0.05) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
+      <div
+        className="absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
+        style={{ background: 'radial-gradient(circle, #818cf8, transparent 70%)' }}
+      />
+    </div>
+  )
+}
+
 export default function ForgotPasswordPage() {
   const router = useRouter()
   const [step, setStep] = useState<'request' | 'confirm'>('request')
@@ -81,17 +99,20 @@ export default function ForgotPasswordPage() {
 
   if (step === 'request') {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
-        <div className="w-full max-w-sm">
+      <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-10">
+        <PageBg />
+        <div className="relative z-10 w-full max-w-sm">
           <div className="mb-8 text-center">
-            <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
-              <span className="text-blue-400 font-bold text-lg">S</span>
+            <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10">
+              <span className="text-lg font-bold text-blue-400">S</span>
             </div>
-            <h1 className="text-xl font-semibold text-white">Reset your password</h1>
-            <p className="text-sm text-slate-400 mt-1">Enter your email and we&apos;ll send you a reset code.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+              Reset your password
+            </h1>
+            <p className="mt-1.5 text-sm text-slate-400">Enter your email and we&apos;ll send you a reset code.</p>
           </div>
 
-          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6 space-y-4">
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm space-y-4">
             <form onSubmit={handleRequest} className="space-y-4">
               <div className="space-y-1.5">
                 <Label>Email</Label>
@@ -118,23 +139,26 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
-      <div className="w-full max-w-sm">
+    <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-10">
+      <PageBg />
+      <div className="relative z-10 w-full max-w-sm">
         <div className="mb-6">
           <button
             onClick={() => { setStep('request'); setError(null); setCode(''); setNewPassword('') }}
-            className="text-xs text-slate-400 hover:text-slate-200 mb-4"
+            className="mb-4 text-xs text-slate-400 hover:text-slate-200 transition-colors"
           >
             ← Try a different email
           </button>
-          <h1 className="text-xl font-semibold text-white">Enter your reset code</h1>
-          <p className="text-sm text-slate-400 mt-1 leading-relaxed">
+          <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+            Enter your reset code
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-400 leading-relaxed">
             If <strong className="text-white">{maskedEmail}</strong> is registered, we&apos;ve sent an 8-digit code.
             Check your inbox and spam folder. The code expires in 15 minutes.
           </p>
         </div>
 
-        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6 space-y-4">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm space-y-4">
           <form onSubmit={handleReset} className="space-y-4">
             <div className="space-y-1.5">
               <Label>New password</Label>

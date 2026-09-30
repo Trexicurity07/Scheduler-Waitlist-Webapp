@@ -24,6 +24,26 @@ function detectField(msg: string): 'businessName' | 'email' | 'password' {
   return 'email'
 }
 
+function PageBg({ glow }: { glow?: 'indigo' | 'cyan' }) {
+  return (
+    <div className="pointer-events-none absolute inset-0">
+      <div
+        className="absolute inset-0"
+        style={{
+          backgroundImage: 'radial-gradient(rgba(148,163,184,0.05) 1px, transparent 1px)',
+          backgroundSize: '28px 28px',
+        }}
+      />
+      <div
+        className="absolute -top-40 left-1/2 h-[500px] w-[500px] -translate-x-1/2 rounded-full opacity-15 blur-3xl"
+        style={{
+          background: `radial-gradient(circle, ${glow === 'cyan' ? '#22d3ee' : '#818cf8'}, transparent 70%)`,
+        }}
+      />
+    </div>
+  )
+}
+
 function SignupPageContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -105,18 +125,19 @@ function SignupPageContent() {
   if (step === 'payment') {
     if (demoSuccess) {
       return (
-        <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
-          <div className="w-full max-w-sm text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-full bg-green-500/15 border border-green-500/30 mb-5">
-              <span className="text-green-400 text-2xl">✓</span>
+        <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4">
+          <PageBg glow="indigo" />
+          <div className="relative z-10 w-full max-w-sm text-center">
+            <div className="mb-5 inline-flex h-14 w-14 items-center justify-center rounded-full border border-green-500/30 bg-green-500/15">
+              <span className="text-2xl text-green-400">✓</span>
             </div>
-            <h1 className="text-xl font-semibold text-white mb-2">
+            <h1 className="mb-2 text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
               You&apos;re on {selectedPlan.label}
             </h1>
-            <p className="text-sm text-slate-400 mb-1">
+            <p className="mb-1 text-sm text-slate-400">
               Your account has been moved to the {selectedPlan.label} tier.
             </p>
-            <p className="text-xs text-amber-400/80 mb-7">
+            <p className="mb-7 text-xs text-amber-400/80">
               Demo build — no charges apply.
             </p>
             <Button asChild className="w-full">
@@ -128,23 +149,26 @@ function SignupPageContent() {
     }
 
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
-        <div className="w-full max-w-sm">
+      <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-10">
+        <PageBg glow="indigo" />
+        <div className="relative z-10 w-full max-w-sm">
           <div className="mb-6">
-            <button onClick={() => setStep('form')} className="text-xs text-slate-400 hover:text-slate-200 mb-4">
+            <button onClick={() => setStep('form')} className="mb-4 text-xs text-slate-400 hover:text-slate-200 transition-colors">
               ← Start over
             </button>
-            <h1 className="text-xl font-semibold text-white">Complete your {selectedPlan.label} subscription</h1>
-            <p className="text-sm text-slate-400 mt-1">You&apos;re almost there — enter your payment details below.</p>
+            <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+              Complete your {selectedPlan.label} subscription
+            </h1>
+            <p className="mt-1.5 text-sm text-slate-400">You&apos;re almost there — enter your payment details below.</p>
           </div>
 
-          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6 space-y-4">
-            <div className="flex justify-between items-center bg-blue-500/5 border border-blue-500/20 rounded-lg px-4 py-3">
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm space-y-4">
+            <div className="flex justify-between items-center rounded-xl border border-blue-500/20 bg-blue-500/5 px-4 py-3">
               <div>
                 <div className="text-sm font-semibold text-white">{selectedPlan.label} plan</div>
-                <div className="text-xs text-slate-500 mt-0.5">Billed monthly · cancel anytime</div>
+                <div className="mt-0.5 text-xs text-slate-500">Billed monthly · cancel anytime</div>
               </div>
-              <div className="text-blue-400 font-bold">{formatPrice(selectedPlan.usdPrice)}/mo</div>
+              <div className="font-bold text-blue-400">{formatPrice(selectedPlan.usdPrice)}/mo</div>
             </div>
 
             <form onSubmit={handlePayment} className="space-y-4">
@@ -204,23 +228,26 @@ function SignupPageContent() {
         </div>
       </main>
     )
-  } // end step === 'payment'
+  }
 
   if (step === 'verify') {
     return (
-      <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4">
-        <div className="w-full max-w-sm">
+      <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-10">
+        <PageBg glow="indigo" />
+        <div className="relative z-10 w-full max-w-sm">
           <div className="mb-6">
-            <button onClick={() => setStep('form')} className="text-xs text-slate-400 hover:text-slate-200 mb-4">
+            <button onClick={() => setStep('form')} className="mb-4 text-xs text-slate-400 hover:text-slate-200 transition-colors">
               ← Back
             </button>
-            <h1 className="text-xl font-semibold text-white">Check your email</h1>
-            <p className="text-sm text-slate-400 mt-1">
+            <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+              Check your email
+            </h1>
+            <p className="mt-1.5 text-sm text-slate-400">
               We sent a 6-digit code to <strong className="text-white">{pendingEmail}</strong>. It expires in 15 minutes.
             </p>
           </div>
 
-          <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6 space-y-4">
+          <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm space-y-4">
             <form onSubmit={handleVerify} className="space-y-4">
               <div className="space-y-1.5">
                 <Label>Verification code</Label>
@@ -253,17 +280,20 @@ function SignupPageContent() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-[#0f172a] px-4 py-12">
-      <div className="w-full max-w-sm">
+    <main className="relative min-h-screen flex items-center justify-center bg-[#090e1a] px-4 py-12">
+      <PageBg glow="indigo" />
+      <div className="relative z-10 w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="inline-flex items-center justify-center w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 mb-4">
-            <span className="text-blue-400 font-bold text-lg">S</span>
+          <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/20 bg-blue-500/10">
+            <span className="text-lg font-bold text-blue-400">S</span>
           </div>
-          <h1 className="text-xl font-semibold text-white">Create your business account</h1>
-          <p className="text-sm text-slate-400 mt-1">Set up your SlotFill waitlist in minutes.</p>
+          <h1 className="text-2xl font-bold tracking-tight text-white" style={{ letterSpacing: '-0.02em' }}>
+            Create your business account
+          </h1>
+          <p className="mt-1.5 text-sm text-slate-400">Set up your SlotFill waitlist in minutes.</p>
         </div>
 
-        <div className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-6">
+        <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] p-6 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <div className="text-sm font-medium text-slate-300">Choose your plan</div>
@@ -273,10 +303,10 @@ function SignupPageContent() {
                     key={p.key}
                     type="button"
                     onClick={() => setPlan(p.key)}
-                    className={`py-3 px-2 rounded-lg border text-center transition-colors ${
+                    className={`py-3 px-2 rounded-xl border text-center transition-colors ${
                       plan === p.key
                         ? 'bg-blue-500/10 border-blue-500/50'
-                        : 'bg-transparent border-white/10 hover:border-white/20'
+                        : 'bg-transparent border-white/[0.08] hover:border-white/20'
                     }`}
                   >
                     <div className={`font-semibold text-xs ${plan === p.key ? 'text-blue-300' : 'text-slate-400'}`}>{p.label}</div>

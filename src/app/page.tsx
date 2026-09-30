@@ -122,119 +122,141 @@ export default function HomePage() {
   return (
     <MarketingLayout>
 
-      {/* ── HERO ─────────────────────────────────────────────────────── */}
-      <section style={{ position: 'relative', overflow: 'hidden', background: '#090e1a' }}>
-        {/* Radial glow */}
-        <div style={{
-          position: 'absolute', top: '-20%', left: '50%', transform: 'translateX(-50%)',
-          width: 900, height: 600,
-          background: 'radial-gradient(ellipse, rgba(99,102,241,0.13) 0%, rgba(59,130,246,0.07) 40%, transparent 70%)',
-          pointerEvents: 'none',
-        }} />
-        {/* Dot grid */}
-        <div style={{
-          position: 'absolute', inset: 0,
-          backgroundImage: 'radial-gradient(rgba(148,163,184,0.07) 1px, transparent 1px)',
-          backgroundSize: '28px 28px',
-          pointerEvents: 'none',
-        }} />
+      {/* ── Hero ─────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden bg-[#090e1a]">
 
-        <div className="relative mx-auto max-w-4xl px-6 py-28 text-center md:py-40">
+        {/* Background layer */}
+        <div className="pointer-events-none absolute inset-0">
+          {/* Dot grid */}
+          <div
+            className="absolute inset-0"
+            style={{
+              backgroundImage: 'radial-gradient(rgba(148,163,184,0.06) 1px, transparent 1px)',
+              backgroundSize: '28px 28px',
+            }}
+          />
+          {/* Indigo orb — top-left */}
+          <div
+            className="absolute -top-32 left-1/4 h-[560px] w-[560px] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #818cf8, transparent 70%)' }}
+          />
+          {/* Cyan orb — top-right */}
+          <div
+            className="absolute -top-20 right-1/4 h-[440px] w-[440px] translate-x-1/2 rounded-full opacity-20 blur-3xl"
+            style={{ background: 'radial-gradient(circle, #22d3ee, transparent 70%)' }}
+          />
+        </div>
+
+        <div className="relative mx-auto max-w-4xl px-6 py-32 text-center md:py-44">
+
           {/* Badge */}
-          <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-4 py-1.5">
-            <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#22c55e', flexShrink: 0 }} />
-            <span className="text-xs font-semibold tracking-widest text-blue-300">EARLY ACCESS · FREE TO START</span>
+          <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-blue-500/25 bg-blue-500/10 px-4 py-1.5">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-400" />
+            <span className="text-xs font-semibold tracking-widest text-blue-300">
+              EARLY ACCESS · FREE TO START
+            </span>
           </div>
 
           {/* Headline */}
           <h1
-            className="mb-6 font-extrabold text-white"
-            style={{ fontSize: 'clamp(2.6rem, 8vw, 5.5rem)', letterSpacing: '-0.04em', lineHeight: 1.05 }}
+            className="mb-6 text-5xl font-extrabold tracking-tight text-white md:text-7xl"
+            style={{ lineHeight: 1.05 }}
           >
             Every cancellation<br />
-            <span style={{
-              background: 'linear-gradient(135deg, #818cf8 0%, #60a5fa 45%, #34d399 100%)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-            }}>
+            <span
+              style={{
+                background: 'linear-gradient(135deg, #818cf8 0%, #60a5fa 45%, #34d399 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+              }}
+            >
               is revenue back.
             </span>
           </h1>
 
-          <p className="mx-auto mb-10 max-w-lg text-lg leading-relaxed text-slate-400">
+          <p className="mx-auto mb-10 max-w-md text-lg leading-relaxed text-slate-400">
             SlotFill automatically fills open calendar slots from your waitlist — keeping your schedule full without the manual follow-up.
           </p>
 
           {/* CTAs */}
-          <div className="mb-14 flex flex-wrap justify-center gap-3">
-            <Button asChild size="lg" style={{ height: 48, paddingLeft: 28, paddingRight: 28, fontSize: '0.95rem' }}>
+          <div className="mb-16 flex flex-wrap justify-center gap-3">
+            <Button asChild size="lg" className="h-12 px-7 text-[0.9375rem]">
               <Link href="/signup">Get started free →</Link>
             </Button>
-            <Button asChild size="lg" variant="outline" style={{ height: 48, paddingLeft: 28, paddingRight: 28, fontSize: '0.95rem' }}>
+            <Button asChild size="lg" variant="outline" className="h-12 px-7 text-[0.9375rem]">
               <Link href="/browse">Browse businesses</Link>
             </Button>
           </div>
 
           {/* Stats strip */}
-          <div
-            className="mx-auto grid grid-cols-3 max-w-lg"
-            style={{ border: '1px solid rgba(255,255,255,0.07)', borderRadius: 16, overflow: 'hidden', background: 'rgba(255,255,255,0.02)' }}
-          >
+          <div className="mx-auto grid max-w-lg grid-cols-3 overflow-hidden rounded-2xl border border-white/[0.07] bg-white/[0.02]">
             {stats.map((s, i) => (
               <div
                 key={s.label}
-                className="px-4 py-5 text-center"
-                style={i > 0 ? { borderLeft: '1px solid rgba(255,255,255,0.07)' } : undefined}
+                className={`px-4 py-5 text-center${i > 0 ? ' border-l border-white/[0.07]' : ''}`}
               >
-                <div className="mb-1 text-xl font-bold text-white" style={{ letterSpacing: '-0.02em' }}>{s.value}</div>
-                <div className="text-slate-500" style={{ fontSize: 11, lineHeight: 1.4 }}>{s.label}</div>
+                <div className="mb-1 text-xl font-bold tracking-tight text-white">{s.value}</div>
+                <div className="text-[11px] leading-snug text-slate-500">{s.label}</div>
               </div>
             ))}
           </div>
+
         </div>
       </section>
 
-      {/* ── HOW IT WORKS ─────────────────────────────────────────────── */}
+      {/* ── Social proof strip ───────────────────────────────────────── */}
+      <div className="border-y border-white/[0.06] bg-white/[0.015] py-4">
+        <p className="text-center text-xs font-medium uppercase tracking-widest text-slate-600">
+          Trusted by service professionals across 40+ industries
+        </p>
+      </div>
+
+      {/* ── How it works ─────────────────────────────────────────────── */}
       <section className="mx-auto max-w-5xl px-6 py-24">
-        <div className="mb-14 text-center">
+
+        <div className="mb-16 text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-blue-400">How it works</p>
-          <h2 className="text-3xl font-extrabold text-white" style={{ letterSpacing: '-0.03em' }}>
+          <h2 className="text-3xl font-extrabold tracking-tight text-white">
             Up and running in 5 minutes
           </h2>
         </div>
 
-        <div className="grid gap-5 md:grid-cols-3">
-          {steps.map(step => (
+        <div className="grid gap-4 md:grid-cols-3 md:gap-6">
+          {steps.map((step, i) => (
             <div
               key={step.n}
-              style={{
-                borderRadius: 20,
-                border: '1px solid rgba(255,255,255,0.07)',
-                background: 'linear-gradient(160deg, #151e30, #111827)',
-                padding: '28px',
-              }}
+              className="relative rounded-2xl border border-white/[0.07] bg-gradient-to-b from-[#151e30] to-[#111827] p-7"
             >
+              {/* Dashed connector to next card (desktop only) */}
+              {i < steps.length - 1 && (
+                <div className="absolute right-0 top-10 hidden w-6 translate-x-full border-t border-dashed border-white/[0.12] md:block" />
+              )}
               <div
-                className="mb-5 text-4xl font-extrabold"
+                className="mb-5 text-4xl font-extrabold tracking-tight"
                 style={{
                   background: 'linear-gradient(135deg, #818cf8, #60a5fa)',
-                  WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text',
-                  letterSpacing: '-0.03em',
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
                 }}
               >
                 {step.n}
               </div>
-              <h3 className="mb-2.5 font-semibold text-white" style={{ fontSize: '0.9375rem' }}>{step.title}</h3>
+              <h3 className="mb-2.5 text-sm font-semibold text-white">{step.title}</h3>
               <p className="text-sm leading-relaxed text-slate-500">{step.desc}</p>
             </div>
           ))}
         </div>
+
       </section>
 
-      {/* ── FEATURES ─────────────────────────────────────────────────── */}
+      {/* ── Features ─────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-5xl px-6 pb-24">
-        <div className="mb-14 text-center">
+
+        <div className="mb-16 text-center">
           <p className="mb-3 text-xs font-semibold uppercase tracking-widest text-blue-400">Features</p>
-          <h2 className="text-3xl font-extrabold text-white" style={{ letterSpacing: '-0.03em' }}>
+          <h2 className="text-3xl font-extrabold tracking-tight text-white">
             Built for busy service businesses
           </h2>
         </div>
@@ -243,18 +265,9 @@ export default function HomePage() {
           {features.map(({ Icon, title, desc }) => (
             <div
               key={title}
-              className="rounded-2xl border border-white/[0.06] bg-[#111827] p-6 transition-colors duration-200 hover:border-blue-500/20 hover:bg-[#131e30]"
+              className="group rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 backdrop-blur-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-blue-500/20 hover:bg-white/[0.04]"
             >
-              <div
-                className="mb-4"
-                style={{
-                  display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-                  width: 40, height: 40, borderRadius: 10,
-                  background: 'rgba(59,130,246,0.1)',
-                  border: '1px solid rgba(59,130,246,0.2)',
-                  color: '#60a5fa',
-                }}
-              >
+              <div className="mb-4 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-blue-500/20 bg-gradient-to-br from-blue-500/15 to-indigo-500/10 text-blue-400">
                 <Icon />
               </div>
               <h3 className="mb-2 text-sm font-semibold text-white">{title}</h3>
@@ -262,38 +275,34 @@ export default function HomePage() {
             </div>
           ))}
         </div>
+
       </section>
 
-      {/* ── CTA ──────────────────────────────────────────────────────── */}
+      {/* ── Final CTA ────────────────────────────────────────────────── */}
       <section className="mx-auto max-w-5xl px-6 pb-28">
-        <div style={{
-          position: 'relative', borderRadius: 24, padding: 1,
-          background: 'linear-gradient(135deg, rgba(99,102,241,0.5) 0%, rgba(59,130,246,0.3) 50%, rgba(52,211,153,0.3) 100%)',
-        }}>
-          <div style={{
-            position: 'relative', borderRadius: 23, padding: '56px 40px',
-            background: '#0c1221', textAlign: 'center', overflow: 'hidden',
-          }}>
+        <div
+          className="relative overflow-hidden rounded-3xl p-px"
+          style={{
+            background: 'linear-gradient(135deg, rgba(99,102,241,0.5), rgba(59,130,246,0.3), rgba(52,211,153,0.3))',
+          }}
+        >
+          <div className="relative overflow-hidden rounded-[23px] bg-[#0c1221] px-10 py-16 text-center md:px-20">
             {/* Ambient glow */}
-            <div style={{
-              position: 'absolute', left: '50%', top: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: 500, height: 250,
-              background: 'radial-gradient(ellipse, rgba(99,102,241,0.12), transparent 70%)',
-              pointerEvents: 'none',
-            }} />
-
-            <h2 className="relative mb-3 text-3xl font-extrabold text-white" style={{ letterSpacing: '-0.03em' }}>
+            <div
+              className="pointer-events-none absolute left-1/2 top-1/2 h-64 w-[500px] -translate-x-1/2 -translate-y-1/2 opacity-60"
+              style={{ background: 'radial-gradient(ellipse, rgba(99,102,241,0.18), transparent 70%)' }}
+            />
+            <h2 className="relative mb-3 text-3xl font-extrabold tracking-tight text-white">
               Stop leaving empty slots on the table
             </h2>
             <p className="relative mb-8 text-sm text-slate-400">
               Free forever on the Starter plan. No credit card required.
             </p>
             <div className="relative flex flex-wrap justify-center gap-3">
-              <Button asChild size="lg" style={{ height: 48, paddingLeft: 28, paddingRight: 28, fontSize: '0.95rem' }}>
+              <Button asChild size="lg" className="h-12 px-7 text-[0.9375rem]">
                 <Link href="/signup">Create your free account →</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" style={{ height: 48, paddingLeft: 28, paddingRight: 28, fontSize: '0.95rem' }}>
+              <Button asChild size="lg" variant="ghost" className="h-12 px-7 text-[0.9375rem] text-slate-300 hover:text-white">
                 <Link href="/pricing">See pricing</Link>
               </Button>
             </div>

@@ -14,7 +14,6 @@ const STORAGE_KEY = 'sf_sidebar_open'
 
 export function DashboardShell({ children, tree }: Props) {
   const pathname = usePathname()
-  // SSR default = open (avoids hydration mismatch)
   const [open, setOpen] = useState(true)
 
   useEffect(() => {
@@ -29,39 +28,17 @@ export function DashboardShell({ children, tree }: Props) {
     })
   }
 
-  // On the waitlist management page — no sidebar
   if (pathname === '/waitlist') {
-    return <div style={{ flex: 1, minWidth: 0, padding: '28px 32px' }}>{children}</div>
+    return <div className="relative z-10 flex-1 min-w-0 px-8 py-7">{children}</div>
   }
 
   return (
-    <div style={{ display: 'flex', flex: 1, minWidth: 0, minHeight: 0 }}>
+    <div className="relative z-10 flex flex-1 min-w-0 min-h-0">
       {open ? (
-        <aside
-          style={{
-            width: 220,
-            flexShrink: 0,
-            backgroundColor: '#1e293b',
-            borderRight: '1px solid #334155',
-            display: 'flex',
-            flexDirection: 'column',
-            overflowY: 'auto',
-          }}
-        >
+        <aside className="w-[220px] shrink-0 bg-white/[0.02] backdrop-blur-md border-r border-white/[0.06] flex flex-col overflow-y-auto">
           <button
             onClick={toggle}
-            style={{
-              background: 'none',
-              border: 'none',
-              borderBottom: '1px solid #334155',
-              color: '#94a3b8',
-              fontSize: '0.75rem',
-              cursor: 'pointer',
-              padding: '8px 12px',
-              textAlign: 'right',
-              flexShrink: 0,
-              letterSpacing: '0.02em',
-            }}
+            className="text-right text-xs text-slate-500 hover:text-slate-300 px-3 py-2 border-b border-white/[0.06] cursor-pointer bg-transparent shrink-0 tracking-wide transition-colors"
           >
             ← Hide
           </button>
@@ -71,26 +48,13 @@ export function DashboardShell({ children, tree }: Props) {
         <button
           onClick={toggle}
           title="Show sidebar"
-          style={{
-            width: 20,
-            flexShrink: 0,
-            backgroundColor: '#1e293b',
-            border: 'none',
-            borderRight: '1px solid #334155',
-            color: '#94a3b8',
-            fontSize: '0.65rem',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 0,
-            writingMode: 'vertical-rl',
-          }}
+          className="w-5 shrink-0 bg-white/[0.02] backdrop-blur-md border-r border-white/[0.06] text-slate-500 hover:text-slate-300 cursor-pointer flex items-center justify-center p-0 transition-colors"
+          style={{ writingMode: 'vertical-rl', fontSize: '0.65rem' }}
         >
           →
         </button>
       )}
-      <div style={{ flex: 1, minWidth: 0, overflow: 'auto', padding: '28px 32px' }}>
+      <div className="flex-1 min-w-0 overflow-auto px-8 py-7">
         {children}
       </div>
     </div>

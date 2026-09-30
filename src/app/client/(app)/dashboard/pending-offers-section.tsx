@@ -25,14 +25,17 @@ export default function PendingOffersSection({ offers }: { offers: PendingOffer[
   return (
     <div className="space-y-3">
       {error && (
-        <div role="alert" className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+        <div
+          role="alert"
+          className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400"
+        >
           {error}
         </div>
       )}
       {localOffers.map((offer) => (
         <div
           key={offer.notification_id}
-          className="bg-sky-500/[0.06] border border-sky-500/20 rounded-xl p-4"
+          className="rounded-2xl border border-sky-500/20 bg-sky-500/[0.06] backdrop-blur-sm p-4"
         >
           <div className="mb-2">
             <span className="text-sm font-semibold text-white">{offer.business_name}</span>

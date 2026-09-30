@@ -17,7 +17,10 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
     return (
       <div className="text-center py-12">
         <p className="text-slate-500 text-sm">You are not on any waitlists.</p>
-        <a href="/browse" className="text-sm text-blue-400 hover:text-blue-300 transition-colors mt-2 inline-block">
+        <a
+          href="/browse"
+          className="text-sm text-sky-400 hover:text-sky-300 transition-colors mt-2 inline-block"
+        >
           Browse businesses →
         </a>
       </div>
@@ -55,14 +58,17 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
   return (
     <div className="space-y-3">
       {error && (
-        <div role="alert" className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
+        <div
+          role="alert"
+          className="rounded-xl bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400"
+        >
           {error}
         </div>
       )}
       {localEntries.map((entry) => (
         <div
           key={entry.entry_id}
-          className="bg-[#1e293b] border border-white/[0.08] rounded-xl p-4"
+          className="rounded-2xl border border-white/[0.07] bg-white/[0.03] backdrop-blur-sm p-4"
         >
           <div className="mb-3">
             <span className="text-sm font-semibold text-white">{entry.business_name}</span>
@@ -94,11 +100,19 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
               {editWindows.map((w, i) => (
                 <div key={i} className="flex items-center gap-2 flex-wrap">
                   {DAYS.map((label, day) => (
-                    <label key={day} className="flex items-center gap-1 cursor-pointer text-xs text-slate-300">
+                    <label
+                      key={day}
+                      className={cn(
+                        'flex items-center gap-1 cursor-pointer text-xs px-2 py-1 rounded-lg border transition-colors',
+                        w.days.includes(day)
+                          ? 'border-sky-500/40 bg-sky-500/10 text-sky-300'
+                          : 'border-white/[0.08] text-slate-400 hover:border-white/20'
+                      )}
+                    >
                       <input
                         type="checkbox"
                         checked={w.days.includes(day)}
-                        className="accent-sky-500"
+                        className="sr-only"
                         onChange={() =>
                           setEditWindows((prev) =>
                             prev.map((x, j) =>
@@ -120,7 +134,7 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
                   <input
                     type="time"
                     value={w.start}
-                    className="px-2 py-1 rounded-md border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
+                    className="px-2 py-1 rounded-lg border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
                     onChange={(e) =>
                       setEditWindows((prev) =>
                         prev.map((x, j) => (j === i ? { ...x, start: e.target.value } : x))
@@ -131,7 +145,7 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
                   <input
                     type="time"
                     value={w.end}
-                    className="px-2 py-1 rounded-md border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
+                    className="px-2 py-1 rounded-lg border border-white/[0.12] text-xs bg-[#0f172a] text-white [color-scheme:dark]"
                     onChange={(e) =>
                       setEditWindows((prev) =>
                         prev.map((x, j) => (j === i ? { ...x, end: e.target.value } : x))
@@ -140,7 +154,7 @@ export default function ActiveEntriesSection({ entries }: { entries: ActiveEntry
                   />
                 </div>
               ))}
-              <div className="flex gap-2 mt-1">
+              <div className="flex gap-2 mt-2">
                 <Button size="sm" onClick={() => handleEditSave(entry.entry_id)}>Save</Button>
                 <Button size="sm" variant="outline" onClick={() => setEditingId(null)}>Cancel</Button>
               </div>

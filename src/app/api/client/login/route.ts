@@ -20,7 +20,7 @@ export async function POST(req: Request) {
   const isPhone = phoneSchema.safeParse(identifier).success
 
   if (isEmail) {
-    email = identifier
+    email = identifier.toLowerCase()
   } else if (isPhone) {
     const normalizedPhone = identifier.replace(/^\+/, '')
     const { data: byPhone } = await serviceSupabase

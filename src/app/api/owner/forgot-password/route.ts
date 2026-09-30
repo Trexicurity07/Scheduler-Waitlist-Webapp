@@ -15,8 +15,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Email is required.' }, { status: 400 })
     }
 
-    const normalizedEmail = email.trim().toLowerCase()
-    const maskedEmail = maskEmail(email.trim())
+    const trimmed = email.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      return NextResponse.json({ error: 'Please enter a valid email address.' }, { status: 400 })
+    }
+
+    const normalizedEmail = trimmed.toLowerCase()
+    const maskedEmail = maskEmail(trimmed)
     const sessionToken = randomUUID()
 
     const serviceSupabase = createServiceRoleClient()
